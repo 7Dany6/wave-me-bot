@@ -127,3 +127,16 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# SQLite Database
+*.db
+
+# Configuration file
+config.py
+
+# Idea files
+/.idea
+
+# Venv files
+/venv
+

@@ -83,23 +83,19 @@ async def register(message: types.Message):
 
 @dp.message_handler(lambda message: message.text == "Track a person")
 async def track_person(message: types.Message):
-    await message.answer("Please enter username of a person (with @ symbol)")
+    await message.answer("Please enter phone number of a person (choose from your contacts)")
 
-@dp.message_handler()
-async def find_person(message: types.Message):
-    try:
-        assert '@' in message.text
-        queries[database.tracked_id(message.text)[0][0]].append(message.from_user.id)
+    @dp.message_handler(content_types=['contact'])
+    async def find_person(message: types.Message):
+        queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
+        print(queries)
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         button1 = types.KeyboardButton("Yes", request_location=True)
         button2 = types.KeyboardButton("No", request_contact=True)
         keyboard.add(button1, button2)
-        await bot.send_message(database.tracked_id(message.text)[0][0],
-                               text=f"User @{message.from_user.username} wants to track you, are you agree?",
+        await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
+                               text=f"User {message.from_user.first_name} @{message.from_user.username} wants to track you, are you agree?",
                                reply_markup=keyboard)
-    except AssertionError:
-        await bot.send_message(message.from_user.id, text="Please enter username WITH '@'")
-
 
 
     @dp.message_handler(content_types=["location"])

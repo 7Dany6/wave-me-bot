@@ -65,7 +65,6 @@ async def registration(message: types.Message):
     keyboard.add(button)
     await bot.send_message(chat_id=message.from_user.id, text="In order to use a bot, please share your contact!", reply_markup=keyboard)
 
-
 #@dp.message_handler(state=Form.surname)
 #async def process_surname(message: types.Message, state: FSMContext):
  #   async with state.proxy() as data:

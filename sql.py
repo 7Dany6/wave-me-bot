@@ -17,12 +17,12 @@ class SQL:
             result = self.cursor.execute("SELECT * FROM `users` WHERE `username` = ?", (username,)).fetchall()
         return bool(len(result))
 
-    def register(self, username, name, surname, id):
+    def register(self, username, name, id, contact):
         """
         Registration of a user
         """
         with self.connection:
-            return self.cursor.execute("INSERT INTO `users` VALUES (?, ?, ?, ?)", (username, name, surname, id))
+            return self.cursor.execute("INSERT INTO `users` VALUES (?, ?, ?, ?)", (username, name, id, contact))
 
     def tracked_id(self, username):
         """
@@ -37,3 +37,10 @@ class SQL:
         """
         with self.connection:
             return self.cursor.execute("SELECT username FROM `users` WHERE `id` = ?", (id,)).fetchall()
+
+    def delete_account(self, id):
+        """
+        Deletes a user from a database
+        """
+        with self.connection:
+            return self.cursor.execute("DELETE FROM `users` WHERE `id` = ?", (id,)).fetchall()

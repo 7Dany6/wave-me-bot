@@ -27,6 +27,11 @@ async def intro_function(message):
                          , reply_markup=keyboard)
 
 
+@dp.message_handler(lambda message: message.text == "Delete an account")
+async def delete_acc(message: types.Message):
+    database.delete_account(message.from_user.id)
+    await bot.send_message(chat_id=message.from_user.id, text="You've successfully deleted your account, hope you'll come back!")
+
 @dp.message_handler(lambda message: message.text == "Cancel", state='*')
 async def cancel_handler(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
@@ -59,24 +64,21 @@ async def registration(message: types.Message):
 
 
 @dp.message_handler(lambda message: message.text == "Register")
-async def registration(message: types.Message):
+async def register(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     button = types.KeyboardButton("Share a contact", request_contact=True)
     keyboard.add(button)
     await bot.send_message(chat_id=message.from_user.id, text="In order to use a bot, please share your contact!", reply_markup=keyboard)
 
-#@dp.message_handler(state=Form.surname)
-#async def process_surname(message: types.Message, state: FSMContext):
- #   async with state.proxy() as data:
-  #      data['surname'] = message.text
-   #     try:
-    #        database.register(f"@{message.from_user.username}", data['name'], data['surname'], message.from_user.id) # contact
-     #       await message.answer('Thank you for the registration!')
-      #      await bot.send_message(USER_ID,
-        #                           text=f"New user: {' '.join([data['name'], data['surname'], f'@{message.from_user.username}'])}")
-       # except sqlite3.IntegrityError:
-        #    await message.answer("You've already been registered!")
-    #await state.finish()
+    @dp.message_handler(content_types=['contact'])
+    async def adding_to_db(message: types.Message):
+        try:
+            database.register(f"@{message.from_user.username}", message.from_user.first_name, message.from_user.id, message.contact['phone_number'])
+            await bot.send_message(chat_id=message.from_user.id, text="Thank you for the registration!")
+            await bot.send_message(USER_ID,
+                                   text=f"New user: {' '.join([message.from_user.first_name, f'@{message.from_user.username}', message.contact['phone_number']])}")
+        except sqlite3.IntegrityError:
+            await bot.send_message(chat_id=message.from_user.id, text="You've already been registered!")
 
 
 @dp.message_handler(lambda message: message.text == "Track a person")

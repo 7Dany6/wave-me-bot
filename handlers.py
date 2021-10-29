@@ -12,7 +12,7 @@ from main import bot, dp
 from aiogram import types
 from keyboard import *
 
-from classes import Form, Person
+from classes import Form
 from sql import SQL
 database = SQL(f'{DB_NAME}')
 
@@ -23,7 +23,7 @@ queries = defaultdict(list)
 async def intro_function(message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(*buttons)
-    await message.answer(f"Willkommen, {message.from_user.first_name}! Choose your action:\n\nRemember to switch on Location for correct usage!"
+    await message.answer(f"Welcome, {message.from_user.first_name}! Choose your action:\n\nRemember to switch on Location for correct usage!"
                          , reply_markup=keyboard)
 
 
@@ -60,30 +60,24 @@ async def registration(message: types.Message):
 
 @dp.message_handler(lambda message: message.text == "Register")
 async def registration(message: types.Message):
-    await Form.name.set()
-    await message.answer('What is your name?')
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    button = types.KeyboardButton("Share a contact", request_contact=True)
+    keyboard.add(button)
+    await bot.send_message(chat_id=message.from_user.id, text="In order to use a bot, please share your contact!", reply_markup=keyboard)
 
 
-@dp.message_handler(state=Form.name)
-async def process_name(message: types.Message, state: FSMContext):
-    async with state.proxy() as data:
-        data['name'] = message.text
-    await message.answer('What is your surname?')
-    await Form.next()
-
-
-@dp.message_handler(state=Form.surname)
-async def process_surname(message: types.Message, state: FSMContext):
-    async with state.proxy() as data:
-        data['surname'] = message.text
-        try:
-            database.register(f"@{message.from_user.username}", data['name'], data['surname'], message.from_user.id) # contact
-            await message.answer('Thank you for the registration!')
-            await bot.send_message(USER_ID,
-                                   text=f"New user: {' '.join([data['name'], data['surname'], f'@{message.from_user.username}'])}")
-        except sqlite3.IntegrityError:
-            await message.answer("You've already been registered!")
-    await state.finish()
+#@dp.message_handler(state=Form.surname)
+#async def process_surname(message: types.Message, state: FSMContext):
+ #   async with state.proxy() as data:
+  #      data['surname'] = message.text
+   #     try:
+    #        database.register(f"@{message.from_user.username}", data['name'], data['surname'], message.from_user.id) # contact
+     #       await message.answer('Thank you for the registration!')
+      #      await bot.send_message(USER_ID,
+        #                           text=f"New user: {' '.join([data['name'], data['surname'], f'@{message.from_user.username}'])}")
+       # except sqlite3.IntegrityError:
+        #    await message.answer("You've already been registered!")
+    #await state.finish()
 
 
 @dp.message_handler(lambda message: message.text == "Track a person")

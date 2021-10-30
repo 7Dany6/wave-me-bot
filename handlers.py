@@ -92,7 +92,7 @@ async def track_person(message: types.Message):
         print(queries)
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         button1 = types.KeyboardButton("Yes", request_location=True)
-        button2 = types.KeyboardButton("No", request_contact=True)
+        button2 = types.KeyboardButton("No")
         keyboard.add(button1, button2)
         await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
                                text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
@@ -119,15 +119,15 @@ async def track_person(message: types.Message):
                                    reply_markup=keyboard)
 
 
-    @dp.message_handler(content_types=["contact"])
+    @dp.message_handler(lambda message: message.text == "No")
     async def give_contact(message: types.Message):
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
-                               text=f"Unfortunately, your request has been rejected but you can call {message['contact']['phone_number']}")
+                               text=f"Unfortunately,user {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]} rejected your request, try to make a call!")
         queries[message.from_user.id].pop()
         if len(queries[message.from_user.id]) != 0:
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             button1 = types.KeyboardButton("Yes", request_location=True)
-            button2 = types.KeyboardButton("No", request_contact=True)
+            button2 = types.KeyboardButton("No")
             keyboard.add(button1, button2)
             await bot.send_message(message.from_user.id,
                                    text=f"User {database.get_name(queries[message.from_user.id][-1])[0][0]} @{database.get_username(queries[message.from_user.id][-1])[0][0]} with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to track you, are you agree?",

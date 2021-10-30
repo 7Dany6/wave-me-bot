@@ -31,6 +31,20 @@ class SQL:
         with self.connection:
             return self.cursor.execute("SELECT id FROM `users` WHERE `contact` = ?", (contact,)).fetchall()
 
+    def get_name(self, id):
+        """
+        Finds name of a person by his id
+        """
+        with self.connection:
+            return self.cursor.execute("SELECT name FROM `users` WHERE `id` = ?", (id,)).fetchall()
+
+    def get_contact(self, id):
+        """
+        Finds contact of a person by his id
+        """
+        with self.connection:
+            return self.cursor.execute("SELECT contact FROM `users` WHERE `id` = ?", (id,)).fetchall()
+
     def get_username(self, id):
         """
         Finds username of a person

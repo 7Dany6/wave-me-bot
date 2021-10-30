@@ -87,6 +87,7 @@ async def track_person(message: types.Message):
 
     @dp.message_handler(content_types=['contact'])
     async def find_person(message: types.Message):
+        print(message.contact['phone_number'][1::])
         queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
         print(queries)
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
@@ -98,6 +99,7 @@ async def track_person(message: types.Message):
                                reply_markup=keyboard)
 
 
+
     @dp.message_handler(content_types=["location"])
     async def give_position(message: types.Message):
         result = requests.get(url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
@@ -107,9 +109,26 @@ async def track_person(message: types.Message):
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
                                text=' '.join([str(message['location']['latitude']), str(message['location']['longitude'])]))
         queries[message.from_user.id].pop()
+        if len(queries[message.from_user.id]) != 0:
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+            button1 = types.KeyboardButton("Yes", request_location=True)
+            button2 = types.KeyboardButton("No", request_contact=True)
+            keyboard.add(button1, button2)
+            await bot.send_message(message.from_user.id,
+                                   text=f"User {database.get_name(queries[message.from_user.id][-1])[0][0]} @{database.get_username(queries[message.from_user.id][-1])[0][0]} with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to track you, are you agree?",
+                                   reply_markup=keyboard)
+
 
     @dp.message_handler(content_types=["contact"])
     async def give_contact(message: types.Message):
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
                                text=f"Unfortunately, your request has been rejected but you can call {message['contact']['phone_number']}")
         queries[message.from_user.id].pop()
+        if len(queries[message.from_user.id]) != 0:
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+            button1 = types.KeyboardButton("Yes", request_location=True)
+            button2 = types.KeyboardButton("No", request_contact=True)
+            keyboard.add(button1, button2)
+            await bot.send_message(message.from_user.id,
+                                   text=f"User {database.get_name(queries[message.from_user.id][-1])[0][0]} @{database.get_username(queries[message.from_user.id][-1])[0][0]} with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to track you, are you agree?",
+                                   reply_markup=keyboard)

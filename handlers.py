@@ -105,7 +105,7 @@ async def track_person(message: types.Message):
         result = requests.get(url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
         json_data = result.json()
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
-                               text=json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text'])
+                               text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} is here:\n {json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
                                text=' '.join([str(message['location']['latitude']), str(message['location']['longitude'])]))
         queries[message.from_user.id].pop()

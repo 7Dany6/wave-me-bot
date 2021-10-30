@@ -95,7 +95,7 @@ async def track_person(message: types.Message):
         button2 = types.KeyboardButton("No", request_contact=True)
         keyboard.add(button1, button2)
         await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
-                               text=f"User {message.from_user.first_name} @{message.from_user.username} wants to track you, are you agree?",
+                               text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
                                reply_markup=keyboard)
 
 

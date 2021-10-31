@@ -57,8 +57,8 @@ async def process_feedback(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(lambda message: message.text == "Information")
-async def registration(message: types.Message):
+@dp.message_handler(lambda message: message.text == "Look at last geopositions")
+async def peek_at_geoposition(message: types.Message):
     text = 'https://yandex.ru/'
     await message.answer(text=text)
 

@@ -17,6 +17,7 @@ from sql import SQL
 database = SQL(f'{DB_NAME}')
 
 queries = defaultdict(list)
+last_geopositions = defaultdict(list)
 
 
 @dp.message_handler(commands="start")
@@ -57,12 +58,6 @@ async def process_feedback(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(lambda message: message.text == "Look at last geopositions")
-async def peek_at_geoposition(message: types.Message):
-    text = 'https://yandex.ru/'
-    await message.answer(text=text)
-
-
 @dp.message_handler(lambda message: message.text == "Register")
 async def register(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
@@ -79,6 +74,15 @@ async def register(message: types.Message):
                                    text=f"New user: {' '.join([message.from_user.first_name, f'@{message.from_user.username}', message.contact['phone_number']])}")
         except sqlite3.IntegrityError:
             await bot.send_message(chat_id=message.from_user.id, text="You've already been registered!")
+
+
+@dp.message_handler(lambda message: message.text == "Look at last geopositions")
+async def peek_at_geoposition(message: types.Message):
+    await bot.send_message(chat_id=message.from_user.id, text="Please share a contact of a person (choose from your contacts)")
+
+    @dp.message_handler(content_types=['contact'])
+    async def send_a_request(message: types.Message):
+        pass
 
 
 @dp.message_handler(lambda message: message.text == "Track a person")

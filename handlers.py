@@ -18,6 +18,7 @@ database = SQL(f'{DB_NAME}')
 
 queries = defaultdict(list)
 last_geopositions = defaultdict(list)
+people_tracking_last_geopositions = defaultdict(list)
 
 
 @dp.message_handler(commands="start")
@@ -76,26 +77,9 @@ async def register(message: types.Message):
             await bot.send_message(chat_id=message.from_user.id, text="You've already been registered!")
 
 
-@dp.message_handler(lambda message: message.text == "Look at last geopositions")
-async def peek_at_geoposition(message: types.Message):
-    await bot.send_message(chat_id=message.from_user.id, text="Please share a contact of a person (choose from your contacts)")
-
-    @dp.message_handler(content_types=['contact'])
-    async def send_a_request(message: types.Message):
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        keyboard.add(*buttons_for_last_geopositions)
-        bot.send_message(chat_id=database.tracked_id(message.contact['phone_number'][1::])[0][0],
-                         text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to peek at your last geopositions, are you agree?",
-                         reply_markup=keyboard)
-
-
-    @dp.message_handler(lambda message: message.text == "Yes")
-    async def send_last_geopositions(message: types.Message):
-        bot.send_message()
-
 @dp.message_handler(lambda message: message.text == "Track a person")
 async def track_person(message: types.Message):
-    await message.answer("Please enter phone number of a person (choose from your contacts)")
+    await message.answer("Please share a contact of a person (choose from your contacts)!")
 
     @dp.message_handler(content_types=['contact'])
     async def find_person(message: types.Message):
@@ -111,7 +95,6 @@ async def track_person(message: types.Message):
                                reply_markup=keyboard)
 
 
-
     @dp.message_handler(content_types=["location"])
     async def give_position(message: types.Message):
         result = requests.get(url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
@@ -121,6 +104,8 @@ async def track_person(message: types.Message):
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
                                text=' '.join([str(message['location']['latitude']), str(message['location']['longitude'])]))
         queries[message.from_user.id].pop()
+        last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")
+        print(last_geopositions)
         if len(queries[message.from_user.id]) != 0:
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             button1 = types.KeyboardButton("Yes", request_location=True)
@@ -144,3 +129,52 @@ async def track_person(message: types.Message):
             await bot.send_message(message.from_user.id,
                                    text=f"User {database.get_name(queries[message.from_user.id][-1])[0][0]} @{database.get_username(queries[message.from_user.id][-1])[0][0]} with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to track you, are you agree?",
                                    reply_markup=keyboard)
+
+
+@dp.message_handler(lambda message: message.text == "Look at last geopositions")
+async def peek_at_geoposition(message: types.Message):
+    await Form.last_geo.set()
+    await message.answer(text="Please share a contact of a person (choose from your contacts)!")
+
+    @dp.message_handler(content_types=['contact'], state=Form.last_geo)
+    async def send_a_request(message: types.Message, state: FSMContext):
+        people_tracking_last_geopositions[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
+        print(people_tracking_last_geopositions)
+        print(message.contact['phone_number'][1::])
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        keyboard.add(*buttons_for_last_geopositions)
+        await bot.send_message(chat_id=database.tracked_id(message.contact['phone_number'][1::])[0][0],
+                         text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to peek at your last geopositions, are you agree?",
+                         reply_markup=keyboard)
+        await state.finish()
+
+
+    @dp.message_handler(lambda message: message.text == "Yes")
+    async def send_last_geopositions(message: types.Message):
+        if len(last_geopositions[message.from_user.id]) >= 5:
+            await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
+                             text=''.join(last_geopositions[message.from_user.id][-1:-6]))
+        else:
+            await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
+                             text=''.join(last_geopositions[message.from_user.id]))
+        people_tracking_last_geopositions[message.from_user.id].pop()
+        if len(people_tracking_last_geopositions[message.from_user.id]) != 0:
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+            keyboard.add(*buttons_for_last_geopositions)
+            await bot.send_message(message.from_user.id,
+                                   text=f"User {database.get_name(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]} @{database.get_username(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]} with number {database.get_contact(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]} wants to peek at your last geopositions, are you agree?",
+                                   reply_markup=keyboard)
+
+
+    @dp.message_handler(lambda message: message.text == "No")
+    async def reject_request(message: types.Message):
+        await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
+                         text=f"Unfortunately,user {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]} rejected your request!")
+        people_tracking_last_geopositions[message.from_user.id].pop()
+        if len(people_tracking_last_geopositions[message.from_user.id]) != 0:
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+            keyboard.add(*buttons_for_last_geopositions)
+            await bot.send_message(message.from_user.id,
+                                   text=f"User {database.get_name(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]} @{database.get_username(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]} with number {database.get_contact(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]} wants to peek at your last geopositions, are you agree?",
+                                   reply_markup=keyboard)
+

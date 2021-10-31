@@ -14,6 +14,8 @@ from keyboard import *
 
 from classes import Form
 from sql import SQL
+from functions import *
+
 database = SQL(f'{DB_NAME}')
 
 queries = defaultdict(list)
@@ -151,13 +153,13 @@ async def peek_at_geoposition(message: types.Message):
     async def send_last_geopositions(message: types.Message):
         if len(last_geopositions[message.from_user.id]) == 0:
             await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
-                                   text='User {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]} has no geopositions!')
+                                   text=f'User {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]} has no geopositions!')
         elif len(last_geopositions[message.from_user.id]) >= 5:
             await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
-                             text='\n'.join(last_geopositions[message.from_user.id][-1:-6]))
+                             text=f'Last geopositions of user {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]}:\n {unpack_geo(last_geopositions[message.from_user.id][-1:-6])}')
         else:
             await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
-                             text='\n'.join(last_geopositions[message.from_user.id]))
+                             text=f'Last geopositions of user {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]}:\n {unpack_geo(last_geopositions[message.from_user.id])}')
         people_tracking_last_geopositions[message.from_user.id].pop()
         if len(people_tracking_last_geopositions[message.from_user.id]) != 0:
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)

@@ -109,7 +109,7 @@ async def track_person(message: types.Message):
         if len(queries[message.from_user.id]) != 0:
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             button1 = types.KeyboardButton("Yes", request_location=True)
-            button2 = types.KeyboardButton("No", request_contact=True)
+            button2 = types.KeyboardButton("No")
             keyboard.add(button1, button2)
             await bot.send_message(message.from_user.id,
                                    text=f"User {database.get_name(queries[message.from_user.id][-1])[0][0]} @{database.get_username(queries[message.from_user.id][-1])[0][0]} with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to track you, are you agree?",
@@ -149,14 +149,17 @@ async def peek_at_geoposition(message: types.Message):
         await state.finish()
 
 
-    @dp.message_handler(lambda message: message.text == "Yes")
+    @dp.message_handler(lambda message: message.text == "Yep")
     async def send_last_geopositions(message: types.Message):
-        if len(last_geopositions[message.from_user.id]) >= 5:
+        if len(last_geopositions[message.from_user.id]) == 0:
             await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
-                             text=''.join(last_geopositions[message.from_user.id][-1:-6]))
+                                   text='User {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]} has no geopositions!')
+        elif len(last_geopositions[message.from_user.id]) >= 5:
+            await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
+                             text='\n'.join(last_geopositions[message.from_user.id][-1:-6]))
         else:
             await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
-                             text=''.join(last_geopositions[message.from_user.id]))
+                             text='\n'.join(last_geopositions[message.from_user.id]))
         people_tracking_last_geopositions[message.from_user.id].pop()
         if len(people_tracking_last_geopositions[message.from_user.id]) != 0:
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
@@ -166,7 +169,7 @@ async def peek_at_geoposition(message: types.Message):
                                    reply_markup=keyboard)
 
 
-    @dp.message_handler(lambda message: message.text == "No")
+    @dp.message_handler(lambda message: message.text == "Nope")
     async def reject_request(message: types.Message):
         await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
                          text=f"Unfortunately,user {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]} rejected your request!")
@@ -177,4 +180,3 @@ async def peek_at_geoposition(message: types.Message):
             await bot.send_message(message.from_user.id,
                                    text=f"User {database.get_name(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]} @{database.get_username(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]} with number {database.get_contact(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]} wants to peek at your last geopositions, are you agree?",
                                    reply_markup=keyboard)
-

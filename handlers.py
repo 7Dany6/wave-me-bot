@@ -83,13 +83,11 @@ async def track_person(message: types.Message):
 
     @dp.message_handler(content_types=['contact'])
     async def find_person(message: types.Message):
-        print(message.contact['phone_number'][1::])
         queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
-        print(queries)
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        button1 = types.KeyboardButton("Yes", request_location=True)
-        button2 = types.KeyboardButton("No")
-        keyboard.add(button1, button2)
+        button_location = types.KeyboardButton("Yes", request_location=True)
+        button_reject = types.KeyboardButton("No")
+        keyboard.add(button_location, button_reject)
         await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
                                text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
                                reply_markup=keyboard)
@@ -108,9 +106,9 @@ async def track_person(message: types.Message):
         print(last_geopositions)
         if len(queries[message.from_user.id]) != 0:
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-            button1 = types.KeyboardButton("Yes", request_location=True)
-            button2 = types.KeyboardButton("No")
-            keyboard.add(button1, button2)
+            button_location = types.KeyboardButton("Yes", request_location=True)
+            button_reject = types.KeyboardButton("No")
+            keyboard.add(button_location, button_reject)
             await bot.send_message(message.from_user.id,
                                    text=f"User {database.get_name(queries[message.from_user.id][-1])[0][0]} @{database.get_username(queries[message.from_user.id][-1])[0][0]} with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to track you, are you agree?",
                                    reply_markup=keyboard)
@@ -123,9 +121,9 @@ async def track_person(message: types.Message):
         queries[message.from_user.id].pop()
         if len(queries[message.from_user.id]) != 0:
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-            button1 = types.KeyboardButton("Yes", request_location=True)
-            button2 = types.KeyboardButton("No")
-            keyboard.add(button1, button2)
+            button_location = types.KeyboardButton("Yes", request_location=True)
+            button_reject = types.KeyboardButton("No")
+            keyboard.add(button_location, button_reject)
             await bot.send_message(message.from_user.id,
                                    text=f"User {database.get_name(queries[message.from_user.id][-1])[0][0]} @{database.get_username(queries[message.from_user.id][-1])[0][0]} with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to track you, are you agree?",
                                    reply_markup=keyboard)

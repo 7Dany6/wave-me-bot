@@ -82,8 +82,16 @@ async def peek_at_geoposition(message: types.Message):
 
     @dp.message_handler(content_types=['contact'])
     async def send_a_request(message: types.Message):
-        pass
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        keyboard.add(*buttons_for_last_geopositions)
+        bot.send_message(chat_id=database.tracked_id(message.contact['phone_number'][1::])[0][0],
+                         text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to peek at your last geopositions, are you agree?",
+                         reply_markup=keyboard)
 
+
+    @dp.message_handler(lambda message: message.text == "Yes")
+    async def send_last_geopositions(message: types.Message):
+        bot.send_message()
 
 @dp.message_handler(lambda message: message.text == "Track a person")
 async def track_person(message: types.Message):

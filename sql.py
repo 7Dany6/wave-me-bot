@@ -17,24 +17,44 @@ class SQL:
             result = self.cursor.execute("SELECT * FROM `users` WHERE `username` = ?", (username,)).fetchall()
         return bool(len(result))
 
-    def register(self, username, name, surname, id):
+    def register(self, username, name, id, contact):
         """
         Registration of a user
         """
         with self.connection:
-            return self.cursor.execute("INSERT INTO `users` VALUES (?, ?, ?, ?)", (username, name, surname, id))
+            return self.cursor.execute("INSERT INTO `users` VALUES (?, ?, ?, ?)", (username, name, id, contact))
 
-    def tracked_id(self, username):
+    def tracked_id(self, contact):
         """
         Find id of a tracked person
         """
         with self.connection:
-            return self.cursor.execute("SELECT id FROM `users` WHERE `username` = ?", (username,)).fetchall()
+            return self.cursor.execute("SELECT id FROM `users` WHERE `contact` = ?", (contact,)).fetchall()
+
+    def get_name(self, id):
+        """
+        Finds name of a person by his id
+        """
+        with self.connection:
+            return self.cursor.execute("SELECT name FROM `users` WHERE `id` = ?", (id,)).fetchall()
+
+    def get_contact(self, id):
+        """
+        Finds contact of a person by his id
+        """
+        with self.connection:
+            return self.cursor.execute("SELECT contact FROM `users` WHERE `id` = ?", (id,)).fetchall()
 
     def get_username(self, id):
+        """
+        Finds username of a person
+        """
         with self.connection:
             return self.cursor.execute("SELECT username FROM `users` WHERE `id` = ?", (id,)).fetchall()
 
-    def get_id(self, username):
+    def delete_account(self, id):
+        """
+        Deletes a user from a database
+        """
         with self.connection:
-            return self.cursor.execute("SELECT id FROM `users` WHERE `username` = ?", (username,)).fetchall()
+            return self.cursor.execute("DELETE FROM `users` WHERE `id` = ?", (id,)).fetchall()

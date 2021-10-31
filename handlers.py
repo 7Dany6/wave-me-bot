@@ -67,9 +67,10 @@ async def register(message: types.Message):
     button = types.KeyboardButton("Share a contact", request_contact=True)
     keyboard.add(button)
     await bot.send_message(chat_id=message.from_user.id, text="In order to use a bot, please share your contact!", reply_markup=keyboard)
+    await Form.register.set()
 
-    @dp.message_handler(content_types=['contact'])
-    async def adding_to_db(message: types.Message):
+    @dp.message_handler(content_types=['contact'], state=Form.register)
+    async def adding_to_db(message: types.Message, state: FSMContext):
         try:
             database.register(f"@{message.from_user.username}", message.from_user.first_name, message.from_user.id, message.contact['phone_number'])
             await bot.send_message(chat_id=message.from_user.id, text="Thank you for the registration!")
@@ -77,6 +78,7 @@ async def register(message: types.Message):
                                    text=f"New user: {' '.join([message.from_user.first_name, f'@{message.from_user.username}', message.contact['phone_number']])}")
         except sqlite3.IntegrityError:
             await bot.send_message(chat_id=message.from_user.id, text="You've already been registered!")
+        await state.finish()
 
 
 @dp.message_handler(lambda message: message.text == "Track a person")

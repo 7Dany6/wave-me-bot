@@ -36,24 +36,29 @@ async def intro_function(message):
     @dp.message_handler(content_types=['contact'], state=Form.register)
     async def adding_to_db(message: types.Message, state: FSMContext):
         try:
-            if str(message.contact['phone number']).startswith('+'):
+            if str(message.contact['phone_number']).startswith('+'):
                 database.register(f"@{message.from_user.username}", message.from_user.first_name, message.from_user.id, message.contact['phone_number'][1::])
             else:
                 database.register(f"@{message.from_user.username}", message.from_user.first_name, message.from_user.id, message.contact['phone_number'])
             await bot.send_message(chat_id=message.from_user.id, text="Thank you for the registration!")
             await bot.send_message(USER_ID,
                                    text=f"New user: {' '.join([message.from_user.first_name, f'@{message.from_user.username}', message.contact['phone_number']])}")
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+            keyboard.add(*buttons)
+            await bot.send_message(message.from_user.id,
+                                   text=f'Welcome, {message.from_user.first_name}! \n Please, choose your further action!',
+                                   reply_markup=keyboard)
         except sqlite3.IntegrityError:
             await bot.send_message(chat_id=message.from_user.id, text="You've already been registered!")
         await state.finish()
 
 
-    @dp.message_handler()
-    async def show_buttons(message: types.Message):
-        if database.user_exists(message.from_user.id):
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-            keyboard.add(*buttons)
-            await bot.send_message(message.from_user.id, text=f'Welcome, {message.from_user.first_name}!/n Please, choose your further action!')
+   # @dp.message_handler()
+    #async def show_buttons(message: types.Message):
+     #   if database.user_exists(message.from_user.id):
+      #      keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+       #     keyboard.add(*buttons)
+        #    await bot.send_message(message.from_user.id, text=f'Welcome, {message.from_user.first_name}!/n Please, choose your further action!')
 
 
 @dp.message_handler(lambda message: message.text == "Delete an account")
@@ -95,6 +100,7 @@ async def track_person(message: types.Message):
         print(message.contact['phone_number'])
         if str(message.contact['phone_number']).startswith("+"):
             queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
+            print(queries)
         else:
             queries[database.tracked_id(message.contact['phone_number'][1::])].append(message.from_user.id)
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)

@@ -24,12 +24,12 @@ class SQL:
         with self.connection:
             return self.cursor.execute("INSERT INTO `users` VALUES (?, ?, ?, ?)", (username, name, id, contact))
 
-    def tracked_id(self, contact):
+    def tracked_id(self, id):
         """
         Find id of a tracked person
         """
         with self.connection:
-            return self.cursor.execute("SELECT id FROM `users` WHERE `contact` = ?", (contact,)).fetchall()
+            return self.cursor.execute("SELECT contact FROM `users` WHERE `id` = ?", (id,)).fetchall()
 
     def get_name(self, id):
         """

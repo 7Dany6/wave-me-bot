@@ -9,12 +9,12 @@ class SQL:
         self.connection = sqlite3.connect(database_file)
         self.cursor = self.connection.cursor()
 
-    def user_exists(self, username):
+    def user_exists(self, contact):
         """
-        Searching a given person in database
+        Searching a given person in the database
         """
         with self.connection:
-            result = self.cursor.execute("SELECT * FROM `users` WHERE `username` = ?", (username,)).fetchall()
+            result = self.cursor.execute("SELECT * FROM `users` WHERE `contact` = ?", (contact,)).fetchall()
         return bool(len(result))
 
     def register(self, username, name, id, contact):

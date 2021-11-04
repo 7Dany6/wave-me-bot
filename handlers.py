@@ -128,7 +128,7 @@ async def track_person(message: types.Message):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             keyboard.add(*buttons)
             await bot.send_message(message.from_user.id,
-                                   text=f'Welcome, {message.from_user.first_name}! \n Please, choose your further action!',
+                                   text=f'Please, choose your further action!',
                                    reply_markup=keyboard)
 
 
@@ -149,7 +149,7 @@ async def track_person(message: types.Message):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             keyboard.add(*buttons)
             await bot.send_message(message.from_user.id,
-                                   text=f'Welcome, {message.from_user.first_name}! \n Please, choose your further action!',
+                                   text=f'Please, choose your further action!',
                                    reply_markup=keyboard)
 
 
@@ -195,7 +195,7 @@ async def peek_at_geoposition(message: types.Message):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             keyboard.add(*buttons)
             await bot.send_message(message.from_user.id,
-                                   text=f'Welcome, {message.from_user.first_name}! \n Please, choose your further action!',
+                                   text=f'Please, choose your further action!',
                                    reply_markup=keyboard)
 
 
@@ -214,5 +214,5 @@ async def peek_at_geoposition(message: types.Message):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             keyboard.add(*buttons)
             await bot.send_message(message.from_user.id,
-                                   text=f'Welcome, {message.from_user.first_name}! \n Please, choose your further action!',
+                                   text=f'Please, choose your further action!',
                                    reply_markup=keyboard)

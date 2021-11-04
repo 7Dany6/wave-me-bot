@@ -165,7 +165,7 @@ async def peek_at_geoposition(message: types.Message):
     async def send_last_geopositions(message: types.Message):
         if len(last_geopositions[message.from_user.id]) == 0:
             await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
-                                   text=f'User {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]} has no geopositions!')
+                                   text=f'User {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]} has no geopositions! Be the first to track him!')
         elif len(last_geopositions[message.from_user.id]) >= 5:
             await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
                              text=f'Last geopositions of user {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]}:\n {unpack_geo(last_geopositions[message.from_user.id][-1:-6])}')

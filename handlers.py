@@ -43,28 +43,21 @@ async def intro_function(message):
             await bot.send_message(chat_id=message.from_user.id, text="Thank you for the registration!")
             await bot.send_message(USER_ID,
                                    text=f"New user: {' '.join([message.from_user.first_name, f'@{message.from_user.username}', message.contact['phone_number']])}")
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-            keyboard.add(*buttons)
-            await bot.send_message(message.from_user.id,
-                                   text=f'Welcome, {message.from_user.first_name}! \n Please, choose your further action!',
-                                   reply_markup=keyboard)
         except sqlite3.IntegrityError:
             await bot.send_message(chat_id=message.from_user.id, text="You've already been registered!")
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        keyboard.add(*buttons)
+        await bot.send_message(message.from_user.id,
+                               text=f'Welcome, {message.from_user.first_name}! \n Please, choose your further action!',
+                               reply_markup=keyboard)
         await state.finish()
-
-
-   # @dp.message_handler()
-    #async def show_buttons(message: types.Message):
-     #   if database.user_exists(message.from_user.id):
-      #      keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-       #     keyboard.add(*buttons)
-        #    await bot.send_message(message.from_user.id, text=f'Welcome, {message.from_user.first_name}!/n Please, choose your further action!')
 
 
 @dp.message_handler(lambda message: message.text == "Delete an account")
 async def delete_acc(message: types.Message):
     database.delete_account(message.from_user.id)
     await bot.send_message(chat_id=message.from_user.id, text="You've successfully deleted your account, hope you'll come back!")
+
 
 @dp.message_handler(lambda message: message.text == "Cancel", state='*')
 async def cancel_handler(message: types.Message, state: FSMContext):
@@ -91,7 +84,7 @@ async def process_feedback(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(lambda message: message.text == "Track a person")
+@dp.message_handler(lambda message: message.text == "Track a person") # add state
 async def track_person(message: types.Message):
     await message.answer("Please share a contact of a person (choose from your contacts)!")
 

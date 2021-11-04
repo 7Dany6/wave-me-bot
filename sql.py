@@ -29,7 +29,7 @@ class SQL:
         Find id of a tracked person
         """
         with self.connection:
-            return self.cursor.execute("SELECT contact FROM `users` WHERE `contact` = ?", (contact,)).fetchall()
+            return self.cursor.execute("SELECT id FROM `users` WHERE `contact` = ?", (contact,)).fetchall()
 
     def get_name(self, id):
         """

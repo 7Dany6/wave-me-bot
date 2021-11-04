@@ -9,12 +9,12 @@ class SQL:
         self.connection = sqlite3.connect(database_file)
         self.cursor = self.connection.cursor()
 
-    def user_exists(self, contact):
+    def user_exists(self, id):
         """
         Searching a given person in the database
         """
         with self.connection:
-            result = self.cursor.execute("SELECT * FROM `users` WHERE `contact` = ?", (contact,)).fetchall()
+            result = self.cursor.execute("SELECT * FROM `users` WHERE `id` = ?", (id,)).fetchall()
         return bool(len(result))
 
     def register(self, username, name, id, contact):
@@ -24,12 +24,12 @@ class SQL:
         with self.connection:
             return self.cursor.execute("INSERT INTO `users` VALUES (?, ?, ?, ?)", (username, name, id, contact))
 
-    def tracked_id(self, id):
+    def tracked_id(self, contact):
         """
         Find id of a tracked person
         """
         with self.connection:
-            return self.cursor.execute("SELECT contact FROM `users` WHERE `id` = ?", (id,)).fetchall()
+            return self.cursor.execute("SELECT contact FROM `users` WHERE `contact` = ?", (contact,)).fetchall()
 
     def get_name(self, id):
         """

@@ -72,7 +72,10 @@ async def register(message: types.Message):
     @dp.message_handler(content_types=['contact'], state=Form.register)
     async def adding_to_db(message: types.Message, state: FSMContext):
         try:
-            database.register(f"@{message.from_user.username}", message.from_user.first_name, message.from_user.id, message.contact['phone_number'])
+            if str(message.contact['phone number']).startswith('+'):
+                database.register(f"@{message.from_user.username}", message.from_user.first_name, message.from_user.id, message.contact['phone_number'][1::])
+            else:
+                database.register(f"@{message.from_user.username}", message.from_user.first_name, message.from_user.id, message.contact['phone_number'])
             await bot.send_message(chat_id=message.from_user.id, text="Thank you for the registration!")
             await bot.send_message(USER_ID,
                                    text=f"New user: {' '.join([message.from_user.first_name, f'@{message.from_user.username}', message.contact['phone_number']])}")
@@ -87,7 +90,11 @@ async def track_person(message: types.Message):
 
     @dp.message_handler(content_types=['contact'])
     async def find_person(message: types.Message):
-        queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
+        print(message.contact['phone_number'])
+        if str(message.contact['phone_number']).startswith("+"):
+            queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
+        else:
+            queries[database.tracked_id(message.contact['phone_number'][1::])].append(message.from_user.id)
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         button_location = types.KeyboardButton("Yes", request_location=True)
         button_reject = types.KeyboardButton("No")
@@ -138,11 +145,13 @@ async def peek_at_geoposition(message: types.Message):
     await Form.last_geo.set()
     await message.answer(text="Please share a contact of a person (choose from your contacts)!")
 
-    @dp.message_handler(content_types=['contact'], state=Form.last_geo)
+    @dp.message_handler(content_types=['contact'], state=Form.last_geo) # do the same with number.startswith
     async def send_a_request(message: types.Message, state: FSMContext):
-        people_tracking_last_geopositions[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
-        print(people_tracking_last_geopositions)
-        print(message.contact['phone_number'][1::])
+        print(message.contact['phone_number'])
+        if str(message.contact['phone_number']).startswith("+"):
+            people_tracking_last_geopositions[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
+        else:
+            people_tracking_last_geopositions[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         keyboard.add(*buttons_for_last_geopositions)
         await bot.send_message(chat_id=database.tracked_id(message.contact['phone_number'][1::])[0][0],

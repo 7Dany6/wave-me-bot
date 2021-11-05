@@ -109,35 +109,42 @@ async def track_person(message: types.Message):
 
     @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)
     async def find_person(message: types.Message, state: FSMContext):
-        print(message.content_type)
-        try:
-            if message.content_type == 'text':
-                queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
-            elif str(message.contact['phone_number']).startswith("+"):
-                queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
-                print(queries)
-            else:
-                queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-            button_location = types.KeyboardButton("Yes", request_location=True)
-            button_reject = types.KeyboardButton("No")
-            button_ignore = types.KeyboardButton("I'm OK")
-            keyboard.add(button_location, button_reject, button_ignore)
-            if message.content_type == 'contact':
-                await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
-                                       text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
-                                       reply_markup=keyboard)
-            else:
-                await bot.send_message(database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
-                                       text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
-                                       reply_markup=keyboard)
-        except IndexError:
-            await bot.send_message(message.from_user.id, text="Unfortunately, this user has not been registered yet, tell him/her about this bot!")
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         keyboard.add(*buttons)
         await bot.send_message(message.from_user.id,
-                               text=f'Please, choose your further action!',
+                               text='Menu:',
                                reply_markup=keyboard)
+        try:
+            if message.content_type == 'text':
+                queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
+            else:
+                if str(message.contact['phone_number']).startswith("+"):
+                    print("here i am")
+                    queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
+                    print(queries)
+                elif "+" not in str(message.contact['phone_number']):
+                    print("i'm here")
+                    queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
+            keyboards = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+            button_location = types.KeyboardButton("Yes", request_location=True)
+            button_reject = types.KeyboardButton("No")
+            button_ignore = types.KeyboardButton("I'm OK")
+            keyboards.add(button_location, button_reject, button_ignore)
+            if message.content_type == 'contact':
+                if str(message.contact['phone_number']).startswith("+"):
+                    await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
+                                           text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
+                                           reply_markup=keyboards)
+                elif "+" not in str(message.contact['phone_number']):
+                    await bot.send_message(database.tracked_id(message.contact['phone_number'])[0][0],
+                                           text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
+                                           reply_markup=keyboards)
+            else:
+                await bot.send_message(database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
+                                       text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
+                                       reply_markup=keyboards)
+        except IndexError:
+            await bot.send_message(message.from_user.id, text="Unfortunately, this user has not been registered yet, tell him/her about this bot!")
         await state.finish()
 
 
@@ -169,7 +176,7 @@ async def track_person(message: types.Message):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             keyboard.add(*buttons)
             await bot.send_message(message.from_user.id,
-                                   text=f'Please, choose your further action!',
+                                   text='Menu:',
                                    reply_markup=keyboard)
 
 
@@ -191,8 +198,10 @@ async def track_person(message: types.Message):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             keyboard.add(*buttons)
             await bot.send_message(message.from_user.id,
-                                   text=f'Please, choose your further action!',
+                                   text='Menu:',
                                    reply_markup=keyboard)
+
+
     @dp.message_handler(lambda message: message.text == "I'm OK")
     async def ignore(message: types.Message):
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
@@ -211,7 +220,7 @@ async def track_person(message: types.Message):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             keyboard.add(*buttons)
             await bot.send_message(message.from_user.id,
-                                   text=f'Please, choose your further action!',
+                                   text='Menu:',
                                    reply_markup=keyboard)
 
 
@@ -236,19 +245,30 @@ async def peek_at_geoposition(message: types.Message):
 
     @dp.message_handler(content_types=['contact', 'text'], state=Form.last_geo)
     async def send_a_request(message: types.Message, state: FSMContext):
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        keyboard.add(*buttons)
+        await bot.send_message(message.from_user.id,
+                               text='Menu:',
+                               reply_markup=keyboard)
         try:
             if message.content_type == 'text':
                 people_tracking_last_geopositions[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
-            elif str(message.contact['phone_number']).startswith("+"):
-                people_tracking_last_geopositions[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
             else:
-                people_tracking_last_geopositions[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
+                if str(message.contact['phone_number']).startswith("+"):
+                    people_tracking_last_geopositions[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
+                elif "+" not in str(message.contact['phone_number']):
+                    people_tracking_last_geopositions[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             keyboard.add(*buttons_for_last_geopositions)
             if message.content_type == 'contact':
-                await bot.send_message(chat_id=database.tracked_id(message.contact['phone_number'][1::])[0][0],
-                                       text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to peek at your last geopositions, are you agree?",
-                                       reply_markup=keyboard)
+                if str(message.contact['phone_number']).startswith("+"):
+                    await bot.send_message(chat_id=database.tracked_id(message.contact['phone_number'][1::])[0][0],
+                                           text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to peek at your last geopositions, are you agree?",
+                                           reply_markup=keyboard)
+                else:
+                    await bot.send_message(chat_id=database.tracked_id(message.contact['phone_number'])[0][0],
+                                           text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to peek at your last geopositions, are you agree?",
+                                           reply_markup=keyboard)
             else:
                 await bot.send_message(chat_id=database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
                                        text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to peek at your last geopositions, are you agree?",
@@ -256,11 +276,6 @@ async def peek_at_geoposition(message: types.Message):
         except IndexError:
             await bot.send_message(message.from_user.id,
                                    text="Unfortunately, this user has not been registered yet, tell him/her about this bot!")
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        keyboard.add(*buttons)
-        await bot.send_message(message.from_user.id,
-                               text=f'Please, choose your further action!',
-                               reply_markup=keyboard)
         await state.finish()
 
 
@@ -286,7 +301,7 @@ async def peek_at_geoposition(message: types.Message):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             keyboard.add(*buttons)
             await bot.send_message(message.from_user.id,
-                                   text=f'Please, choose your further action!',
+                                   text='Menu:',
                                    reply_markup=keyboard)
 
 
@@ -305,10 +320,10 @@ async def peek_at_geoposition(message: types.Message):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             keyboard.add(*buttons)
             await bot.send_message(message.from_user.id,
-                                   text=f'Please, choose your further action!',
+                                   text='Menu:',
                                    reply_markup=keyboard)
 
-    @dp.message_handler(lambda message: message.text == "I'm OK")
+    @dp.message_handler(lambda message: message.text == "I am OK")
     async def ignore_request(message: types.Message):
         await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
                                text=f"User {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]} feels OK!")
@@ -323,5 +338,5 @@ async def peek_at_geoposition(message: types.Message):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             keyboard.add(*buttons)
             await bot.send_message(message.from_user.id,
-                                   text=f'Please, choose your further action!',
+                                   text='Menu:',
                                    reply_markup=keyboard)

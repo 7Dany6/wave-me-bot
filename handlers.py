@@ -85,7 +85,7 @@ async def process_feedback(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(lambda message: message.text == "Track a person") # add state; index error if a user is not regitered
+@dp.message_handler(lambda message: message.text == "Track a person")
 async def track_person(message: types.Message):
     await message.answer("Please share a contact of a person (choose from your contacts)!")
     await Form.tracking.set()
@@ -159,12 +159,12 @@ async def track_person(message: types.Message):
                                    reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == "Look at last geopositions") # index error if a user is not regitered
+@dp.message_handler(lambda message: message.text == "Look at last geopositions")
 async def peek_at_geoposition(message: types.Message):
     await Form.last_geo.set()
     await message.answer(text="Please share a contact of a person (choose from your contacts)!")
 
-    @dp.message_handler(content_types=['contact'], state=Form.last_geo) # do the same with number.startswith
+    @dp.message_handler(content_types=['contact'], state=Form.last_geo)
     async def send_a_request(message: types.Message, state: FSMContext):
         print(message.contact['phone_number'])
         try:

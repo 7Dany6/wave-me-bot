@@ -36,6 +36,7 @@ async def intro_function(message):
     @dp.message_handler(content_types=['contact'], state=Form.register)
     async def adding_to_db(message: types.Message, state: FSMContext):
         try:
+            print(message.contact['phone_number'])
             if str(message.contact['phone_number']).startswith('+'):
                 database.register(f"@{message.from_user.username}", message.from_user.first_name, message.from_user.id, message.contact['phone_number'][1::])
             else:
@@ -84,18 +85,19 @@ async def process_feedback(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(lambda message: message.text == "Track a person") # add state
+@dp.message_handler(lambda message: message.text == "Track a person") # add state; index error if a user is not regitered
 async def track_person(message: types.Message):
     await message.answer("Please share a contact of a person (choose from your contacts)!")
+    await Form.tracking.set()
 
-    @dp.message_handler(content_types=['contact'])
-    async def find_person(message: types.Message):
+    @dp.message_handler(content_types=['contact'], state=Form.tracking)
+    async def find_person(message: types.Message, state: FSMContext):
         print(message.contact['phone_number'])
         if str(message.contact['phone_number']).startswith("+"):
             queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
             print(queries)
         else:
-            queries[database.tracked_id(message.contact['phone_number'][1::])].append(message.from_user.id)
+            queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         button_location = types.KeyboardButton("Yes", request_location=True)
         button_reject = types.KeyboardButton("No")
@@ -103,6 +105,7 @@ async def track_person(message: types.Message):
         await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
                                text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
                                reply_markup=keyboard)
+        await state.finish()
 
 
     @dp.message_handler(content_types=["location"])
@@ -153,7 +156,7 @@ async def track_person(message: types.Message):
                                    reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == "Look at last geopositions")
+@dp.message_handler(lambda message: message.text == "Look at last geopositions") # index error if a user is not regitered
 async def peek_at_geoposition(message: types.Message):
     await Form.last_geo.set()
     await message.answer(text="Please share a contact of a person (choose from your contacts)!")

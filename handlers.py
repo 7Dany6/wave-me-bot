@@ -29,7 +29,7 @@ async def intro_function(message):
     button = types.KeyboardButton("Share a contact", request_contact=True)
     keyboard.add(button)
     await bot.send_message(chat_id=message.from_user.id, text='In order to use a bot please share your contact!'
-                        , reply_markup=keyboard)
+                         , reply_markup=keyboard)
     await Form.register.set()
 
 
@@ -89,23 +89,14 @@ async def process_feedback(message: types.Message, state: FSMContext):
                                text=f"Feedback from @{message.from_user.username}: {data['feedback']}")
     await state.finish()
 
+
 @dp.message_handler(lambda message: message.text == "Track a person")
-async def tracking(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    keyboard.add(*buttons_for_track_a_person)
-    await bot.send_message(message.from_user.id,
-                           text=f'What do you want to do?',
-                           reply_markup=keyboard)
+async def track_person(message: types.Message):
+    await message.answer("Please share a contact of a person (choose from your contacts)!")
     await Form.tracking.set()
 
-
-@dp.message_handler(lambda message: message.text == "Track a geoposition", state=Form.tracking)
-async def track_person(message: types.Message, state: FSMContext):
-    await message.answer("Please share a contact of a person (choose from your contacts)!")
-    await state.finish()
-
-    @dp.message_handler(content_types=['contact'])
-    async def find_person(message: types.Message):
+    @dp.message_handler(content_types=['contact'], state=Form.tracking)
+    async def find_person(message: types.Message, state: FSMContext):
         print(message.contact['phone_number'])
         try:
             if str(message.contact['phone_number']).startswith("+"):
@@ -116,18 +107,13 @@ async def track_person(message: types.Message, state: FSMContext):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             button_location = types.KeyboardButton("Yes", request_location=True)
             button_reject = types.KeyboardButton("No")
-            button_ignore = types.KeyboardButton("I'm OK")
-            keyboard.add(button_location, button_reject, button_ignore)
+            keyboard.add(button_location, button_reject)
             await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
                                    text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
                                    reply_markup=keyboard)
         except IndexError:
             await bot.send_message(message.from_user.id, text="Unfortunately, this user has not been registered yet, tell him/her about this bot!")
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        keyboard.add(*buttons)
-        await bot.send_message(message.from_user.id,
-                               text=f'Please, choose your further action!',
-                               reply_markup=keyboard)
+        await state.finish()
 
 
     @dp.message_handler(content_types=["location"])
@@ -145,8 +131,7 @@ async def track_person(message: types.Message, state: FSMContext):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             button_location = types.KeyboardButton("Yes", request_location=True)
             button_reject = types.KeyboardButton("No")
-            button_ignore = types.KeyboardButton("I'm OK")
-            keyboard.add(button_location, button_reject, button_ignore)
+            keyboard.add(button_location, button_reject)
             await bot.send_message(message.from_user.id,
                                    text=f"User {database.get_name(queries[message.from_user.id][-1])[0][0]} @{database.get_username(queries[message.from_user.id][-1])[0][0]} with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to track you, are you agree?",
                                    reply_markup=keyboard)
@@ -167,8 +152,7 @@ async def track_person(message: types.Message, state: FSMContext):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             button_location = types.KeyboardButton("Yes", request_location=True)
             button_reject = types.KeyboardButton("No")
-            button_ignore = types.KeyboardButton("I'm OK")
-            keyboard.add(button_location, button_reject, button_ignore)
+            keyboard.add(button_location, button_reject)
             await bot.send_message(message.from_user.id,
                                    text=f"User {database.get_name(queries[message.from_user.id][-1])[0][0]} @{database.get_username(queries[message.from_user.id][-1])[0][0]} with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to track you, are you agree?",
                                    reply_markup=keyboard)
@@ -178,37 +162,14 @@ async def track_person(message: types.Message, state: FSMContext):
             await bot.send_message(message.from_user.id,
                                    text=f'Please, choose your further action!',
                                    reply_markup=keyboard)
-
-
-    @dp.message_handler(lambda message: message.text == "I'm OK")
-    async def ignore(message: types.Message):
-        await bot.send_message(chat_id=queries[message.from_user.id][-1],
-                               text=f"User {database.get_name(message.from_user.id)[0][0]} {database.get_username(message.from_user.id)[0][0]} with number {database.get_contact(message.from_user.id)[0][0]} feels OK!")
-        queries[message.from_user.id].pop()
-        if len(queries[message.from_user.id]) != 0:
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-            button_location = types.KeyboardButton("Yes", request_location=True)
-            button_reject = types.KeyboardButton("No")
-            button_ignore = types.KeyboardButton("I'm OK")
-            keyboard.add(button_location, button_reject, button_ignore)
-            await bot.send_message(message.from_user.id,
-                                   text=f"User {database.get_name(queries[message.from_user.id][-1])[0][0]} @{database.get_username(queries[message.from_user.id][-1])[0][0]} with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to track you, are you agree?",
-                                   reply_markup=keyboard)
-        if len(queries[message.from_user.id]) == 0:
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-            keyboard.add(*buttons)
-            await bot.send_message(message.from_user.id,
-                                   text=f'Please, choose your further action!',
-                                   reply_markup=keyboard)
-
 
 
 @dp.message_handler(lambda message: message.text == "Look at last geopositions")
 async def peek_at_geoposition(message: types.Message):
-    #await Form.last_geo.set()
+    await Form.last_geo.set()
     await message.answer(text="Please share a contact of a person (choose from your contacts)!")
 
-    @dp.message_handler(content_types=['contact'], state=Form.last_geo)
+    @dp.message_handler(content_types=['contact'], state=Form.last_geo) # do the same with number.startswith
     async def send_a_request(message: types.Message, state: FSMContext):
         print(message.contact['phone_number'])
         try:
@@ -224,13 +185,7 @@ async def peek_at_geoposition(message: types.Message):
         except IndexError:
             await bot.send_message(message.from_user.id,
                                    text="Unfortunately, this user has not been registered yet, tell him/her about this bot!")
-        #await state.finish()
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        keyboard.add(*buttons)
-        await bot.send_message(message.from_user.id,
-                               text=f'Please, choose your further action!',
-                               reply_markup=keyboard)
-
+        await state.finish()
 
 
     @dp.message_handler(lambda message: message.text == "Yep")

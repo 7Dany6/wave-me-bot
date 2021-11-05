@@ -5,3 +5,4 @@ class Form(StatesGroup):
     feedback = State()
     register = State()
     last_geo = State()
+    tracking = State()

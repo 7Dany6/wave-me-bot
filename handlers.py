@@ -33,7 +33,7 @@ async def intro_function(message):
     await Form.register.set()
 
 
-    @dp.message_handler(content_types=['contact'], state=Form.register)
+    @dp.message_handler(content_types=['contact'], state=Form.register)  # add content types
     async def adding_to_db(message: types.Message, state: FSMContext):
         try:
             print(message.contact['phone_number'])
@@ -92,14 +92,32 @@ async def process_feedback(message: types.Message, state: FSMContext):
 
 @dp.message_handler(lambda message: message.text == "Track a person")
 async def track_person(message: types.Message):
-    await message.answer("Please share a contact of a person (choose from your contacts)!")
+    if database.tracking_existance(message.from_user.id):
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        #print([contact[0] for contact in database.get_trackable(message.from_user.id)])
+        #print([database.get_first_name(contact[0]) for contact in database.get_trackable(message.from_user.id)])
+        buttons_for_tracking = [database.get_first_name(contact[0])[0][0] for contact in database.get_trackable(message.from_user.id)]
+        keyboard.add(*buttons_for_tracking)
+        await bot.send_message(message.from_user.id,
+                               text="Please share a contact of a person (choose from your contacts) or click a button with his/her name!",
+                               reply_markup=keyboard)
+    else:
+        await bot.send_message(message.from_user.id,
+                               text="Please share a contact of a person (choose from your contacts)!")
     await Form.tracking.set()
 
-    @dp.message_handler(content_types=['contact'], state=Form.tracking)
+    @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)
     async def find_person(message: types.Message, state: FSMContext):
-        print(message.contact['phone_number'])
+        print(message.content_type)
         try:
-            if str(message.contact['phone_number']).startswith("+"):
+            if message.content_type == 'text':
+                queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
+                keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+                keyboard.add(*buttons)
+                await bot.send_message(message.from_user.id,
+                                       text=f'Please, choose your further action!',
+                                       reply_markup=keyboard)
+            elif str(message.contact['phone_number']).startswith("+"):
                 queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
                 print(queries)
             else:
@@ -109,9 +127,14 @@ async def track_person(message: types.Message):
             button_reject = types.KeyboardButton("No")
             button_ignore = types.KeyboardButton("I'm OK")
             keyboard.add(button_location, button_reject, button_ignore)
-            await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
-                                   text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
-                                   reply_markup=keyboard)
+            if message.content_type == 'contact':
+                await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
+                                       text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
+                                       reply_markup=keyboard)
+            else:
+                await bot.send_message(database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
+                                       text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} wants to track you, are you agree?",
+                                       reply_markup=keyboard)
         except IndexError:
             await bot.send_message(message.from_user.id, text="Unfortunately, this user has not been registered yet, tell him/her about this bot!")
         await state.finish()
@@ -125,9 +148,13 @@ async def track_person(message: types.Message):
                                text=f"User {message.from_user.first_name} @{message.from_user.username} with number {database.get_contact(message.from_user.id)[0][0]} is here:\n {json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
                                text=' '.join([str(message['location']['latitude']), str(message['location']['longitude'])]))
+        if not database.user_existance(queries[message.from_user.id][-1], message.from_user.id):
+            database.add_to_tracking_trackable(queries[message.from_user.id][-1], database.get_contact(queries[message.from_user.id][-1])[0][0],
+                                               message.from_user.id, database.get_contact(message.from_user.id)[0][0], database.get_name(message.from_user.id)[0][0])
+        else:
+            database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
         queries[message.from_user.id].pop()
         last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")
-        print(last_geopositions)
         if len(queries[message.from_user.id]) != 0:
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             button_location = types.KeyboardButton("Yes", request_location=True)

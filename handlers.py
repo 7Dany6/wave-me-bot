@@ -49,7 +49,7 @@ async def intro_function(message):
         except sqlite3.IntegrityError:
             await bot.send_message(chat_id=message.from_user.id, text="You've already been registered!")
         await bot.send_message(message.from_user.id,
-                               text=f'Welcome, {message.from_user.first_name}! \n Please, choose your further action!',
+                               text=f'Welcome, {message.from_user.first_name}! \n Please, choose your further action from menu!',
                                reply_markup=keyboard)
         await state.finish()
 
@@ -85,7 +85,7 @@ async def process_feedback(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(commands="track_a_person")
+@dp.message_handler(commands="track_person")
 async def track_person(message: types.Message):
     if database.tracking_existance(message.from_user.id):
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
@@ -183,7 +183,7 @@ async def track_person(message: types.Message):
                                    parse_mode=ParseMode.MARKDOWN_V2)
 
 
-@dp.message_handler(commands="look_at_last_geopositions")
+@dp.message_handler(commands="last_geo")
 async def peek_at_geoposition(message: types.Message):
     if database.tracking_existance(message.from_user.id):
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)

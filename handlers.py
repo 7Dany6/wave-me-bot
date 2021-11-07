@@ -52,7 +52,7 @@ async def intro_function(message):
         except sqlite3.IntegrityError:
             await bot.send_message(chat_id=message.from_user.id, text="You've already been registered!")
         await bot.send_message(message.from_user.id,
-                               text=f'Welcome, {message.from_user.first_name}! \n Please, choose your further action from menu!',
+                               text=f'Welcome, {message.from_user.first_name}! \nPlease, choose your further action from menu!',
                                )
         await state.finish()
 

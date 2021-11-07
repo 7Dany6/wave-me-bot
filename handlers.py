@@ -177,7 +177,7 @@ async def track_person(message: types.Message):
     @dp.message_handler(lambda message: message.text == "I'm OK")
     async def give_contact(message: types.Message):
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
-                               text=f"Unfortunately,user [{database.get_name(message.from_user.id)[0][0]}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} rejected your request, but he feels OK\!", parse_mode=ParseMode.MARKDOWN_V2)
+                               text=f"User [{database.get_name(message.from_user.id)[0][0]}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} feels OK\!", parse_mode=ParseMode.MARKDOWN_V2)
         queries[message.from_user.id].pop()
         if len(queries[message.from_user.id]) != 0:
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)

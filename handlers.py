@@ -6,9 +6,9 @@ import requests
 from collections import defaultdict
 
 from aiogram.dispatcher import FSMContext
-from aiogram.types import ParseMode
 
 from config import API_KEY, USER_ID, DB_NAME
+from functions import _
 
 from main import bot, dp
 
@@ -31,11 +31,7 @@ async def intro_function(message):
     if database.user_exists(message.from_user.id):
         await register(message.from_user.id)
     else:
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        button = types.KeyboardButton("Share a contact", request_contact=True)
-        keyboard.add(button)
-        await bot.send_message(chat_id=message.from_user.id, text='In order to use a bot please share your contact!'
-                               , reply_markup=keyboard)
+        await aware_of_contact(message.from_user.id)
         await Form.register.set()
 
     @dp.message_handler(content_types=['contact'], state=Form.register)
@@ -49,15 +45,13 @@ async def intro_function(message):
                 database.register(message.from_user.first_name,
                                   message.from_user.id,
                                   message.contact['phone_number'])
-            await bot.send_message(chat_id=message.from_user.id,
-                                   text="Thank you for the registration!")
+            await thank(message.from_user.id)
             await bot.send_message(USER_ID,
                                    text=f"New user: {' '.join([message.from_user.first_name,f'@{message.from_user.username}', message.contact['phone_number']])}")
         except sqlite3.IntegrityError:
             await register(message.from_user.id)
-        await bot.send_message(message.from_user.id,
-                               text=f'Welcome, {message.from_user.first_name}! \nPlease, choose your further action from menu!',
-                               )
+        await action_after_registration(message.from_user.id,
+                                  message.from_user.first_name)
         await state.finish()
 
 
@@ -68,13 +62,13 @@ async def cancel_handler(message: types.Message, state: FSMContext):
         return
     logging.info('Cancelling state {}'.format(current_state))
     await state.finish()
-    await message.answer('Your action has been cancelled')
+    await cancel(message.from_user.id)
 
 
 @dp.message_handler(commands="feedback")
 async def feedback(message: types.Message):
     await Form.feedback.set()
-    await message.answer("Leave your opinion, it will improve the bot!")
+    await feedback(message.from_user.id)
 
 
 @dp.message_handler(state=Form.feedback)
@@ -91,20 +85,20 @@ async def process_feedback(message: types.Message, state: FSMContext):
 async def track_person(message: types.Message):
     if database.tracking_existance(message.from_user.id):
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        buttons_for_tracking = [database.get_first_name(contact[0])[0][0] for contact in database.get_trackable(message.from_user.id)]
+        buttons_for_tracking = [database.get_first_name(contact[0])[0][0] for contact in
+                                database.get_trackable(message.from_user.id)]
         keyboard.add(*buttons_for_tracking)
         await bot.send_message(message.from_user.id,
-                               text="Please share a contact of a person (choose from your contacts) or click a button with his/her name!",
+                               text=_(
+                                   "Please share a contact of a person (choose from your contacts) or click a button with his/her name!"),
                                reply_markup=keyboard)
     else:
-        await bot.send_message(message.from_user.id,
-                               text="Please share a contact of a person (choose from your contacts)!")
+        await share_a_contact(message.from_user.id)
     await Form.tracking.set()
 
     @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)
     async def find_person(message: types.Message, state: FSMContext):
-        await bot.send_message(message.from_user.id,
-                               text="Your request has been accepted!\nA person will share his location or state soon, meanwhile you can continue using a bot!")
+        await request_acceptance(message.from_user.id)
         try:
             if message.content_type == 'text':
                 queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
@@ -133,7 +127,7 @@ async def track_person(message: types.Message):
                                    message.from_user.id,
                                    database.get_contact(message.from_user.id)[0][0])
         except IndexError:
-            await bot.send_message(message.from_user.id, text="Unfortunately, this user has not been registered yet, tell him/her about this bot by forwarding the following message:")
+            await forwarding(message.from_user.id)
             await bot.send_message(message.from_user.id, text='@here_i_ambot')
         await state.finish()
 
@@ -143,7 +137,7 @@ async def track_person(message: types.Message):
         result = requests.get(url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
         json_data = result.json()
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
-                               text=f"User [{message.from_user.first_name}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} is here:\n{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}",
+                               text=_("User [{0}](tg://user?id={1}) with number {2} is here:\n{3}").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']),
                                parse_mode=ParseMode.MARKDOWN_V2)
         await bot.send_location(queries[message.from_user.id][-1], latitude=message['location']['latitude'],
                                 longitude=message['location']['longitude'])
@@ -161,10 +155,11 @@ async def track_person(message: types.Message):
                                database.get_contact(queries[message.from_user.id][-1])[0][0])
 
 
-    @dp.message_handler(lambda message: message.text == "I'm OK")
+    @dp.message_handler(content_types=["text"])
     async def give_contact(message: types.Message):
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
-                               text=f"User [{database.get_name(message.from_user.id)[0][0]}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} feels OK\!", parse_mode=ParseMode.MARKDOWN_V2)
+                               text=_("User [{0}](tg://user?id={1}) with number {2} feels OK\!").format(database.get_name(message.from_user.id)[0][0], message.from_user.id, database.get_contact(message.from_user.id)[0][0])
+                               , parse_mode=ParseMode.MARKDOWN_V2)
         queries[message.from_user.id].pop()
         if len(queries[message.from_user.id]) != 0:
             await send_request(message.from_user.id,

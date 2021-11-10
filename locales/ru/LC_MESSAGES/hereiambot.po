@@ -1,0 +1,74 @@
+# Russian translations for PROJECT.
+# Copyright (C) 2021 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+# functions.py line 34
+msgid "Share a contact"
+msgstr "Поделиться контактом"
+
+# functions.py line 39
+msgid "In order to use a bot please share your contact!"
+msgstr "Для продолжения работы,пожалуйста, поделитесь контактом!"
+
+# functions.py line 44
+msgid "Thank you for the registration!"
+msgstr "Спасибо за регистрацию!"
+
+# functions.py line 48
+msgid "Welcome, {0}! \nPlease, choose your further action from menu!"
+msgstr "Добро пожаловать, {0}!\nВ меню доступна инструкция на русском.\nПожалуйста, выберите действие из меню!"
+
+# functions.py line 53
+msgid "Your action has been cancelled"
+msgstr "Ваше действие было отменено!"
+
+# functions.py line 56
+msgid "Leave your opinion, it will improve the bot!"
+msgstr "Оставьте Ваше мнение, это улучшит бота!"
+
+# handlers.py line 93
+msgid "Please share a contact of a person (choose from your contacts) or click a button with his/her name!"
+msgstr "Пожалуйста, поделитесь контактом человека (выберите из Ваших контактов) или нажмите на кнопку с его именем!"
+
+# functions.py line 61
+msgid "Please share a contact of a person (choose from your contacts)!"
+msgstr "Пожалуйста, поделитесь контактом человека (выберите из Ваших контактов)!"
+
+# functions.py line 66
+msgid "Your request has been accepted!\nA person will share his location or state soon, meanwhile you can continue using a bot!"
+msgstr "Ваш запрос принят!\nПользователь скоро ответит своей локацией или своим состоянием, Вы можете продолжать использовать бота!"
+
+# functions.py line 70
+msgid "Unfortunately, this user has not been registered yet, tell him/her about this bot by forwarding the following message:"
+msgstr "К сожалению, выбранный Вами пользователь не зарегистрирован, расскажите ему о боте, переслав следующее сообщение:"
+
+# functions.py line 13
+msgid "You've already been registered!"
+msgstr "Поздравляем, Вы уже зарегистрированы!"
+
+# functions.py line 17
+msgid "Location"
+msgstr "Локация"
+
+# functions.py line 18
+msgid "I'm OK"
+msgstr "Я в порядке"
+
+# functions.py line 24
+msgid "User [{0}](tg://user?id={1}) with number {2} wants to know how are you\.\n*Switch on your location before answer 'Location'*\."
+msgstr "Пользователь [{0}](tg://user?id={1}) с номером {2} хочет узнать, как Вы\.\n*Включите локацию перед тем, как ответить 'Локация'*\."
+
+# handlers.py line 161
+msgid "User [{0}](tg://user?id={1}) with number {2} feels OK\!"
+msgstr "Пользователь [{0}](tg://user?id={1}) с номером {2} в порядке\!"
+
+# handlers.py line 140
+msgid "User [{0}](tg://user?id={1}) with number {2} is here:\n{3}"
+msgstr "Пользователь [{0}](tg://user?id={1}) с номером {2} находится здесь:\n{3}"
+
+
+
+
+

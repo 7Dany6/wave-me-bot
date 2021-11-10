@@ -29,7 +29,7 @@ people_tracking_last_geopositions = defaultdict(list)
 @dp.message_handler(commands="start")
 async def intro_function(message):
     if database.user_exists(message.from_user.id):
-        await bot.send_message(chat_id=message.from_user.id, text="You've already been registered!")
+        await register(message.from_user.id)
     else:
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         button = types.KeyboardButton("Share a contact", request_contact=True)
@@ -42,7 +42,6 @@ async def intro_function(message):
     @dp.message_handler(content_types=['contact'], state=Form.register)
     async def adding_to_db(message: types.Message, state: FSMContext):
         try:
-            print(message.contact['phone_number'])
             if str(message.contact['phone_number']).startswith('+'):
                 database.register(message.from_user.first_name, message.from_user.id, message.contact['phone_number'][1::])
             else:
@@ -51,7 +50,7 @@ async def intro_function(message):
             await bot.send_message(USER_ID,
                                    text=f"New user: {' '.join([message.from_user.first_name, f'@{message.from_user.username}', message.contact['phone_number']])}")
         except sqlite3.IntegrityError:
-            await bot.send_message(chat_id=message.from_user.id, text="You've already been registered!")
+            await register(message.from_user.id)
         await bot.send_message(message.from_user.id,
                                text=f'Welcome, {message.from_user.first_name}! \nPlease, choose your further action from menu!',
                                )
@@ -113,14 +112,14 @@ async def track_person(message: types.Message):
                 elif "+" not in str(message.contact['phone_number']):
                     print("i'm here")
                     queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
-            keyboards = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+            keyboards = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)  # duplication_buttons2
             button_location = types.KeyboardButton("Location", request_location=True)
             button_reject = types.KeyboardButton("I'm OK")
             keyboards.add(button_location, button_reject)
             if message.content_type == 'contact':
                 if str(message.contact['phone_number']).startswith("+"):
                     await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
-                                           text=f"User [{message.from_user.first_name}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} wants to know how are you\.\n*Switch on your location before answer 'Location'*\.",
+                                           text=f"User [{message.from_user.first_name}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} wants to know how are you\.\n*Switch on your location before answer 'Location'*\.",  # duplication except 1st line
                                            reply_markup=keyboards,
                                            parse_mode=ParseMode.MARKDOWN_V2)
                 elif "+" not in str(message.contact['phone_number']):
@@ -155,13 +154,13 @@ async def track_person(message: types.Message):
             database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
         queries[message.from_user.id].pop()
         last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")  # база с координатами, временем, contact и кто просил
-        if len(queries[message.from_user.id]) != 0:
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        if len(queries[message.from_user.id]) != 0:  # duplication block
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)  # duplication_buttons2
             button_location = types.KeyboardButton("Location", request_location=True)
             button_reject = types.KeyboardButton("I'm OK")
             keyboard.add(button_location, button_reject)
             await bot.send_message(message.from_user.id,
-                                   text=f"User [{database.get_name(queries[message.from_user.id][-1])[0][0]}](tg://user?id={queries[message.from_user.id][-1]}) with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to know how are you\.\n*Switch on your location before answer 'Location'*\.",
+                                   text=f"User [{database.get_name(queries[message.from_user.id][-1])[0][0]}](tg://user?id={queries[message.from_user.id][-1]}) with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to know how are you\.\n*Switch on your location before answer 'Location'*\.",  # duplication buttons except 1st line
                                    reply_markup=keyboard,
                                    parse_mode=ParseMode.MARKDOWN_V2)
 
@@ -172,8 +171,8 @@ async def track_person(message: types.Message):
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
                                text=f"User [{database.get_name(message.from_user.id)[0][0]}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} feels OK\!", parse_mode=ParseMode.MARKDOWN_V2)
         queries[message.from_user.id].pop()
-        if len(queries[message.from_user.id]) != 0:
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        if len(queries[message.from_user.id]) != 0:  # duplication block
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)  # duplication_buttons2
             button_location = types.KeyboardButton("Location", request_location=True)
             button_reject = types.KeyboardButton("I'm OK")
             keyboard.add(button_location, button_reject)

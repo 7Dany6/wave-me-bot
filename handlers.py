@@ -114,20 +114,20 @@ async def track_person(message: types.Message):
                     queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
             if message.content_type == 'contact':
                 if str(message.contact['phone_number']).startswith("+"):
-                    await bot.send_message(database.tracked_id(message.contact['phone_number'][1::])[0][0],
-                                           text=f"User [{message.from_user.first_name}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} wants to know how are you\.\n*Switch on your location before answer 'Location'*\.",  # duplication except 1st line
-                                           reply_markup=throw_buttons(),
-                                           parse_mode=ParseMode.MARKDOWN_V2)
+                    await send_request(database.tracked_id(message.contact['phone_number'][1::])[0][0],
+                                       message.from_user.first_name,
+                                       message.from_user.id,
+                                       database.get_contact(message.from_user.id)[0][0])
                 elif "+" not in str(message.contact['phone_number']):
-                    await bot.send_message(database.tracked_id(message.contact['phone_number'])[0][0],
-                                           text=f"User [{message.from_user.first_name}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} wants to know how are you\.\n*Switch on your location before answer 'Location'*\.",
-                                           reply_markup=throw_buttons(),
-                                           parse_mode=ParseMode.MARKDOWN_V2)
+                    await send_request(database.tracked_id(message.contact['phone_number'])[0][0],
+                                       message.from_user.first_name,
+                                       message.from_user.id,
+                                       database.get_contact(message.from_user.id)[0][0])
             else:
-                await bot.send_message(database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
-                                       text=f"User [{message.from_user.first_name}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} wants to know how are you\.\n*Switch on your location before answer 'Location'*\.",
-                                       reply_markup=throw_buttons(),
-                                       parse_mode=ParseMode.MARKDOWN_V2)
+                await send_request(database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
+                                   message.from_user.first_name,
+                                   message.from_user.id,
+                                   database.get_contact(message.from_user.id)[0][0])
         except IndexError:
             await bot.send_message(message.from_user.id, text="Unfortunately, this user has not been registered yet, tell him/her about this bot by forwarding the following message:")
             await bot.send_message(message.from_user.id, text='@here_i_ambot')

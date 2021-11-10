@@ -1,4 +1,4 @@
-from main import bot, dp
+from main import bot
 from aiogram import types
 from aiogram.types import ParseMode
 

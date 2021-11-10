@@ -35,20 +35,24 @@ async def intro_function(message):
         button = types.KeyboardButton("Share a contact", request_contact=True)
         keyboard.add(button)
         await bot.send_message(chat_id=message.from_user.id, text='In order to use a bot please share your contact!'
-                             , reply_markup=keyboard)
+                               , reply_markup=keyboard)
         await Form.register.set()
-
 
     @dp.message_handler(content_types=['contact'], state=Form.register)
     async def adding_to_db(message: types.Message, state: FSMContext):
         try:
             if str(message.contact['phone_number']).startswith('+'):
-                database.register(message.from_user.first_name, message.from_user.id, message.contact['phone_number'][1::])
+                database.register(message.from_user.first_name,
+                                  message.from_user.id,
+                                  message.contact['phone_number'][1::])
             else:
-                database.register(message.from_user.first_name, message.from_user.id, message.contact['phone_number'])
-            await bot.send_message(chat_id=message.from_user.id, text="Thank you for the registration!")
+                database.register(message.from_user.first_name,
+                                  message.from_user.id,
+                                  message.contact['phone_number'])
+            await bot.send_message(chat_id=message.from_user.id,
+                                   text="Thank you for the registration!")
             await bot.send_message(USER_ID,
-                                   text=f"New user: {' '.join([message.from_user.first_name, f'@{message.from_user.username}', message.contact['phone_number']])}")
+                                   text=f"New user: {' '.join([message.from_user.first_name,f'@{message.from_user.username}', message.contact['phone_number']])}")
         except sqlite3.IntegrityError:
             await register(message.from_user.id)
         await bot.send_message(message.from_user.id,

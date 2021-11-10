@@ -154,16 +154,11 @@ async def track_person(message: types.Message):
             database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
         queries[message.from_user.id].pop()
         last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")  # база с координатами, временем, contact и кто просил
-        if len(queries[message.from_user.id]) != 0:  # duplication block
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)  # duplication_buttons2
-            button_location = types.KeyboardButton("Location", request_location=True)
-            button_reject = types.KeyboardButton("I'm OK")
-            keyboard.add(button_location, button_reject)
-            await bot.send_message(message.from_user.id,
-                                   text=f"User [{database.get_name(queries[message.from_user.id][-1])[0][0]}](tg://user?id={queries[message.from_user.id][-1]}) with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to know how are you\.\n*Switch on your location before answer 'Location'*\.",  # duplication buttons except 1st line
-                                   reply_markup=keyboard,
-                                   parse_mode=ParseMode.MARKDOWN_V2)
-
+        if len(queries[message.from_user.id]) != 0:
+            await send_request(message.from_user.id,
+                               database.get_name(queries[message.from_user.id][-1])[0][0],
+                               queries[message.from_user.id][-1],
+                               database.get_contact(queries[message.from_user.id][-1])[0][0])
 
 
     @dp.message_handler(lambda message: message.text == "I'm OK")
@@ -171,15 +166,11 @@ async def track_person(message: types.Message):
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
                                text=f"User [{database.get_name(message.from_user.id)[0][0]}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} feels OK\!", parse_mode=ParseMode.MARKDOWN_V2)
         queries[message.from_user.id].pop()
-        if len(queries[message.from_user.id]) != 0:  # duplication block
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)  # duplication_buttons2
-            button_location = types.KeyboardButton("Location", request_location=True)
-            button_reject = types.KeyboardButton("I'm OK")
-            keyboard.add(button_location, button_reject)
-            await bot.send_message(message.from_user.id,
-                                   text=f"User [{database.get_name(queries[message.from_user.id][-1])[0][0]}](tg://user?id={queries[message.from_user.id][-1]}) with number {database.get_contact(queries[message.from_user.id][-1])[0][0]} wants to know how are you\.\n*Switch on your location before answer 'Location'*\.",
-                                   reply_markup=keyboard,
-                                   parse_mode=ParseMode.MARKDOWN_V2)
+        if len(queries[message.from_user.id]) != 0:
+            await send_request(message.from_user.id,
+                         database.get_name(queries[message.from_user.id][-1])[0][0],
+                         queries[message.from_user.id][-1],
+                         database.get_contact(queries[message.from_user.id][-1])[0][0])
 
 
 

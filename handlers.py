@@ -67,8 +67,8 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 
 @dp.message_handler(commands="feedback")
 async def feedback(message: types.Message):
+    await bot.send_message(message.from_user.id, text=_("Leave your opinion, it will improve the bot!"))
     await Form.feedback.set()
-    await feedback(message.from_user.id)
 
 
 @dp.message_handler(state=Form.feedback)

@@ -52,9 +52,6 @@ async def action_after_registration(id: int, first_name: str):
 async def cancel(id: int):
     await bot.send_message(id, text=_("Your action has been cancelled"))
 
-async def feedback(id: int):
-    await bot.send_message(id, text=_("Leave your opinion, it will improve the bot!"))
-
 
 async def share_a_contact(id: int):
     await bot.send_message(id,

@@ -180,6 +180,7 @@ async def russian_instructure(message: types.Message):
 
 
 
+
 @dp.message_handler(commands="last_geo")
 async def peek_at_geoposition(message: types.Message):
     if database.tracking_existance(message.from_user.id):

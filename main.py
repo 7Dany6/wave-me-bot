@@ -7,7 +7,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 storage = MemoryStorage()
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename="logging.log", level=logging.INFO)
 
 loop = asyncio.get_event_loop()
 bot = Bot(BOT_TOKEN, parse_mode='HTML')

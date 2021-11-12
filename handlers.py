@@ -98,38 +98,41 @@ async def track_person(message: types.Message, state: FSMContext):
 
     @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)
     async def find_person(message: types.Message, state: FSMContext):
-        await request_acceptance(message.from_user.id)
-        try:
-            if message.content_type == 'text':
-                queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
-            else:
-                if str(message.contact['phone_number']).startswith("+"):
-                    print("here i am")
-                    queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
-                    print(queries)
-                elif "+" not in str(message.contact['phone_number']):
-                    print("i'm here")
-                    queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
-            if message.content_type == 'contact':
-                if str(message.contact['phone_number']).startswith("+"):
-                    await send_request(database.tracked_id(message.contact['phone_number'][1::])[0][0],
-                                       message.from_user.first_name,
-                                       message.from_user.id,
-                                       database.get_contact(message.from_user.id)[0][0])
-                elif "+" not in str(message.contact['phone_number']):
-                    await send_request(database.tracked_id(message.contact['phone_number'])[0][0],
-                                       message.from_user.first_name,
-                                       message.from_user.id,
-                                       database.get_contact(message.from_user.id)[0][0])
-            else:
-                await send_request(database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
-                                   message.from_user.first_name,
-                                   message.from_user.id,
-                                   database.get_contact(message.from_user.id)[0][0])
-        except IndexError:
-            await forwarding(message.from_user.id)
-            await bot.send_message(message.from_user.id, text='@here_i_ambot')
-        await state.finish()
+	if message.text == _("I'm OK"):
+		await give_contact(message=message)
+	else:
+		await request_acceptance(message.from_user.id)
+		try:
+			if message.content_type == 'text':
+				queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
+			else:
+				if str(message.contact['phone_number']).startswith("+"):
+					print("here i am")
+					queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
+					print(queries)
+				elif "+" not in str(message.contact['phone_number']):
+					print("i'm here")
+					queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
+			if message.content_type == 'contact':
+				if str(message.contact['phone_number']).startswith("+"):
+					await send_request(database.tracked_id(message.contact['phone_number'][1::])[0][0],
+							   message.from_user.first_name,
+							   message.from_user.id,
+							   database.get_contact(message.from_user.id)[0][0])
+				elif "+" not in str(message.contact['phone_number']):
+					await send_request(database.tracked_id(message.contact['phone_number'])[0][0],
+							   message.from_user.first_name,
+							   message.from_user.id,
+							   database.get_contact(message.from_user.id)[0][0])
+			else:
+				await send_request(database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
+						   message.from_user.first_name,
+						   message.from_user.id,
+						   database.get_contact(message.from_user.id)[0][0])
+		except IndexError:
+			await forwarding(message.from_user.id)
+			await bot.send_message(message.from_user.id, text='@here_i_ambot')
+		await state.finish()
 
 
     @dp.message_handler(content_types=["location"], state="*")

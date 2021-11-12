@@ -1,3 +1,6 @@
+from aiogram.dispatcher.filters import state
+from aiogram.dispatcher import FSMContext
+
 from main import bot, dp
 from aiogram import types
 from aiogram.types import ParseMode
@@ -65,3 +68,10 @@ async def request_acceptance(id: int):
 async def forwarding(id: int):
     await bot.send_message(id,
                            text=_("Unfortunately, this user has not been registered yet, tell him/her about this bot by forwarding the following message:"))
+
+async def cancel():
+    current_state = await state.get_state()
+    if current_state:
+        await state.finish()
+
+# сделать fsm state.reset и импортировать

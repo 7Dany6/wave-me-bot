@@ -69,9 +69,9 @@ async def forwarding(id: int):
     await bot.send_message(id,
                            text=_("Unfortunately, this user has not been registered yet, tell him/her about this bot by forwarding the following message:"))
 
-async def cancel():
-    current_state = await state.get_state()
-    if current_state:
-        await state.finish()
 
-# сделать fsm state.reset и импортировать
+async def send_request_live(ids: int, first_name: str, message_id:int, contact):
+    await bot.send_message(ids,
+                           text=_("User [{0}](tg://user?id={1}) with number {2} wants to track your *live* location\.\n*Switch on your location before answer 'Location'*\.").format(first_name, message_id, contact),
+                           reply_markup=throw_buttons(),
+                           parse_mode=ParseMode.MARKDOWN_V2)

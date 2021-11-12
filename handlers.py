@@ -58,27 +58,29 @@ async def intro_function(message):
 @dp.message_handler(commands="cancel", state='*')
 async def cancel_handler(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
-    if current_state is None:
-        return
+    if current_state is not None:
+        await state.finish()
     logging.info('Cancelling state {}'.format(current_state))
-    await state.finish()
     await cancel(message.from_user.id)
 
 
 @dp.message_handler(commands="feedback", state='*')
 async def feedback(message: types.Message, state: FSMContext):
-    await bot.send_message(message.from_user.id, text=_("Leave your opinion, it will improve the bot!"))
-    await Form.feedback.set()
-
-
-    @dp.message_handler(state=Form.feedback)
-    async def process_feedback(message: types.Message, state: FSMContext):
-        async with state.proxy() as data:
-            data['feedback'] = message.text
-            await bot.send_message(USER_ID,
-                                   text=f"Feedback from [{message.from_user.first_name}](tg://user?id={message.from_user.id}): {data['feedback']}",
-                                   parse_mode=ParseMode.MARKDOWN_V2)
+    current_state = await state.get_state()
+    print(current_state is None)
+    if current_state is not None:
         await state.finish()
+        print('finish')
+    await bot.send_message(message.from_user.id, text=_("Leave your opinion, it will improve the bot!"))
+
+
+    @dp.message_handler(content_types=["text"], state="*")
+    async def process_feedback(message: types.Message):
+        print("comment")
+        await bot.send_message(USER_ID,
+                               text=f"Feedback from [{message.from_user.first_name}](tg://user?id={message.from_user.id}): {message.text}",
+                               parse_mode=ParseMode.MARKDOWN_V2)
+
 
 
 @dp.message_handler(commands="care", state='*')
@@ -98,41 +100,42 @@ async def track_person(message: types.Message, state: FSMContext):
 
     @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)
     async def find_person(message: types.Message, state: FSMContext):
-	if message.text == _("I'm OK"):
-		await give_contact(message=message)
-	else:
-		await request_acceptance(message.from_user.id)
-		try:
-			if message.content_type == 'text':
-				queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
-			else:
-				if str(message.contact['phone_number']).startswith("+"):
-					print("here i am")
-					queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
-					print(queries)
-				elif "+" not in str(message.contact['phone_number']):
-					print("i'm here")
-					queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
-			if message.content_type == 'contact':
-				if str(message.contact['phone_number']).startswith("+"):
-					await send_request(database.tracked_id(message.contact['phone_number'][1::])[0][0],
-							   message.from_user.first_name,
-							   message.from_user.id,
-							   database.get_contact(message.from_user.id)[0][0])
-				elif "+" not in str(message.contact['phone_number']):
-					await send_request(database.tracked_id(message.contact['phone_number'])[0][0],
-							   message.from_user.first_name,
-							   message.from_user.id,
-							   database.get_contact(message.from_user.id)[0][0])
-			else:
-				await send_request(database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
-						   message.from_user.first_name,
-						   message.from_user.id,
-						   database.get_contact(message.from_user.id)[0][0])
-		except IndexError:
-			await forwarding(message.from_user.id)
-			await bot.send_message(message.from_user.id, text='@here_i_ambot')
-		await state.finish()
+        if message.text == _("I'm OK"):
+            print('here')
+            await give_contact(message=message)
+        else:
+            await request_acceptance(message.from_user.id)
+            try:
+                if message.content_type == 'text':
+                    queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
+                else:
+                    if str(message.contact['phone_number']).startswith("+"):
+                        print("here i am")
+                        queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
+                        print(queries)
+                    elif "+" not in str(message.contact['phone_number']):
+                        print("i'm here")
+                        queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
+                if message.content_type == 'contact':
+                    if str(message.contact['phone_number']).startswith("+"):
+                        await send_request(database.tracked_id(message.contact['phone_number'][1::])[0][0],
+                                           message.from_user.first_name,
+                                           message.from_user.id,
+                                           database.get_contact(message.from_user.id)[0][0])
+                    elif "+" not in str(message.contact['phone_number']):
+                        await send_request(database.tracked_id(message.contact['phone_number'])[0][0],
+                                           message.from_user.first_name,
+                                           message.from_user.id,
+                                           database.get_contact(message.from_user.id)[0][0])
+                else:
+                    await send_request(database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
+                                       message.from_user.first_name,
+                                       message.from_user.id,
+                                       database.get_contact(message.from_user.id)[0][0])
+            except IndexError:
+                await forwarding(message.from_user.id)
+                await bot.send_message(message.from_user.id, text='@here_i_ambot')
+            await state.finish()
 
 
     @dp.message_handler(content_types=["location"], state="*")
@@ -159,7 +162,7 @@ async def track_person(message: types.Message, state: FSMContext):
 
 
     @dp.message_handler(content_types=["text"], state="*")
-    async def give_contact(message: types.Message, state: FSMContext):
+    async def give_contact(message: types.Message):
         await bot.send_message(chat_id=queries[message.from_user.id][-1],
                                text=_("User [{0}](tg://user?id={1}) with number {2} feels OK\!").format(database.get_name(message.from_user.id)[0][0], message.from_user.id, database.get_contact(message.from_user.id)[0][0])
                                , parse_mode=ParseMode.MARKDOWN_V2)
@@ -176,96 +179,3 @@ async def russian_instructure(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id,
                            text="Привет!\n\nУ всех нас есть люди, о которых мы проявляем заботу, но иногда это бывает слишком навязчиво...\n\nВ таких случаях я готов помочь Вам, выступив посредником в ваших отношениях\n\nС моей помощью Вы можете узнать, где тот или иной человек находится или как у него дела без прямого контакта.\n\nНажмите /start и наслаждайтесь возможностями:\n\n-/care, чтобы проверить локацию/состояние человека (через знак скрепки)\n\n-/feedback, чтобы оставить своём мнение о боте\n\nP.S. Используйте меня на смартфоне, а не на компьютере!"
                            )
-
-
-
-
-
-
-@dp.message_handler(commands="last_geo")
-async def peek_at_geoposition(message: types.Message):
-    if database.tracking_existance(message.from_user.id):
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        #print([contact[0] for contact in database.get_trackable(message.from_user.id)])
-        #print([database.get_first_name(contact[0]) for contact in database.get_trackable(message.from_user.id)])
-        buttons_for_tracking = [database.get_first_name(contact[0])[0][0] for contact in database.get_trackable(message.from_user.id)]
-        keyboard.add(*buttons_for_tracking)
-        await bot.send_message(message.from_user.id,
-                               text="Please share a contact of a person (choose from your contacts) or click a button with his/her name!",
-                               reply_markup=keyboard)
-    else:
-        await bot.send_message(message.from_user.id,
-                               text="Please share a contact of a person (choose from your contacts)!")
-    await Form.last_geo.set()
-
-
-    @dp.message_handler(content_types=['contact', 'text'], state=Form.last_geo)
-    async def send_a_request(message: types.Message, state: FSMContext):
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        try:
-            if message.content_type == 'text':
-                people_tracking_last_geopositions[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
-            else:
-                if str(message.contact['phone_number']).startswith("+"):
-                    people_tracking_last_geopositions[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
-                elif "+" not in str(message.contact['phone_number']):
-                    people_tracking_last_geopositions[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-            keyboard.add(*buttons_for_last_geopositions)
-            if message.content_type == 'contact':
-                if str(message.contact['phone_number']).startswith("+"):
-                    await bot.send_message(chat_id=database.tracked_id(message.contact['phone_number'][1::])[0][0],
-                                           text=f"User [{message.from_user.first_name}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} wants to peek at your last geopositions, are you agree?",
-                                           reply_markup=keyboard,
-                                           parse_mode=ParseMode.MARKDOWN_V2)
-                else:
-                    await bot.send_message(chat_id=database.tracked_id(message.contact['phone_number'])[0][0],
-                                           text=f"User [{message.from_user.first_name}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} wants to peek at your last geopositions, are you agree?",
-                                           reply_markup=keyboard,
-                                           parse_mode=ParseMode.MARKDOWN_V2)
-            else:
-                await bot.send_message(chat_id=database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
-                                       text=f"User [{message.from_user.first_name}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} wants to peek at your last geopositions, are you agree?",
-                                       reply_markup=keyboard,
-                                       parse_mode=ParseMode.MARKDOWN_V2)
-        except IndexError:
-            await bot.send_message(message.from_user.id,
-                                   text="Unfortunately, this user has not been registered yet, tell him/her about this bot!")
-        await state.finish()
-
-
-    @dp.message_handler(lambda message: message.text == "Yep")
-    async def send_last_geopositions(message: types.Message):
-        if len(last_geopositions[message.from_user.id]) == 0:
-            await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
-                                   text=f'User [{database.get_name(message.from_user.id)[0][0]}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} has no geopositions\! Be the first to track him\!', parse_mode=ParseMode.MARKDOWN_V2)
-        elif len(last_geopositions[message.from_user.id]) >= 5:
-            await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
-                             text=f'Last geopositions of user [{database.get_name(message.from_user.id)[0][0]}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]}:\n {unpack_geo(last_geopositions[message.from_user.id][-1:-6])}', parse_mode=ParseMode.MARKDOWN_V2)
-        else:
-            await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
-                             text=f'Last geopositions of user [{database.get_name(message.from_user.id)[0][0]}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]}:\n {unpack_geo(last_geopositions[message.from_user.id])}', parse_mode=ParseMode.MARKDOWN_V2)
-        people_tracking_last_geopositions[message.from_user.id].pop()
-        if len(people_tracking_last_geopositions[message.from_user.id]) != 0:
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-            keyboard.add(*buttons_for_last_geopositions)
-            await bot.send_message(message.from_user.id,
-                                   text=f"User [{database.get_name(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]}](tg://user?id={people_tracking_last_geopositions[message.from_user.id][-1]}) with number {database.get_contact(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]} wants to peek at your last geopositions, are you agree?",
-                                   reply_markup=keyboard,
-                                   parse_mode=ParseMode.MARKDOWN_V2)
-
-
-    @dp.message_handler(lambda message: message.text == "Nope, I'm OK")
-    async def reject_request(message: types.Message):
-        await bot.send_message(chat_id=people_tracking_last_geopositions[message.from_user.id][-1],
-                         text=f"Unfortunately,user [{database.get_name(message.from_user.id)[0][0]}](tg://user?id={message.from_user.id}) with number {database.get_contact(message.from_user.id)[0][0]} rejected your request, but feels OK\!", parse_mode=ParseMode.MARKDOWN_V2)
-        people_tracking_last_geopositions[message.from_user.id].pop()
-        if len(people_tracking_last_geopositions[message.from_user.id]) != 0:
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-            keyboard.add(*buttons_for_last_geopositions)
-            await bot.send_message(message.from_user.id,
-                                   text=f"User [{database.get_name(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]}](tg://user?id={people_tracking_last_geopositions[message.from_user.id][-1]}) with number {database.get_contact(people_tracking_last_geopositions[message.from_user.id][-1])[0][0]} wants to peek at your last geopositions, are you agree?",
-                                   reply_markup=keyboard,
-                                   parse_mode=ParseMode.MARKDOWN_V2)
-
-

@@ -64,20 +64,6 @@ async def cancel_handler(message: types.Message, state: FSMContext):
     await cancel(message.from_user.id)
 
 
-@dp.message_handler(commands="feedback", state='*')
-async def feedback(message: types.Message):
-    await bot.send_message(message.from_user.id, text=_("Leave your opinion, it will improve the bot!"))
-    await Form.feedback.set()
-
-@dp.message_handler(content_types=["text"], state=Form.feedback)
-async def process_feedback(message: types.Message, state: FSMContext):
-    print("comment")
-    await bot.send_message(USER_ID,
-                           text=f"Feedback from [{message.from_user.first_name}](tg://user?id={message.from_user.id}): {message.text}",
-                           parse_mode=ParseMode.MARKDOWN_V2)
-    await state.finish()
-
-
 @dp.message_handler(commands="care", state='*')
 async def track_person(message: types.Message, state: FSMContext):
     if database.tracking_existance(message.from_user.id):
@@ -174,3 +160,19 @@ async def russian_instructure(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id,
                            text="Привет!\n\nУ всех нас есть люди, о которых мы проявляем заботу, но иногда это бывает слишком навязчиво...\n\nВ таких случаях я готов помочь Вам, выступив посредником в ваших отношениях\n\nС моей помощью Вы можете узнать, где тот или иной человек находится или как у него дела без прямого контакта.\n\nНажмите /start и наслаждайтесь возможностями:\n\n-/care, чтобы проверить локацию/состояние человека (через знак скрепки)\n\n-/feedback, чтобы оставить своём мнение о боте\n\nP.S. Используйте меня на смартфоне, а не на компьютере!"
                            )
+
+
+@dp.message_handler(commands="feedback", state='*')
+async def feedback(message: types.Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state is not None:
+        await state.finish()
+        print("reset")
+    await bot.send_message(message.from_user.id, text=_("Leave your opinion, it will improve the bot!"))
+
+    @dp.message_handler(content_types=["text"], state='*')
+    async def process_feedback(message: types.Message):
+        print("comment")
+        await bot.send_message(USER_ID,
+                               text=f"Feedback from [{message.from_user.first_name}](tg://user?id={message.from_user.id}): {message.text}",
+                               parse_mode=ParseMode.MARKDOWN_V2)

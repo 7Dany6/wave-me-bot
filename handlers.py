@@ -173,10 +173,10 @@ async def feedback(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
     print(current_state)
 
-    @dp.message_handler(content_types=['text'], state=Form.feedback)
-    async def process_feedback(message: types.Message, state: FSMContext):
-        print("comment")
-        await bot.send_message(USER_ID,
-                               text=f"Feedback from [{message.from_user.first_name}](tg://user?id={message.from_user.id}): {message.text}",
-                               parse_mode=ParseMode.MARKDOWN_V2)
-        await state.finish()
+@dp.message_handler(content_types=['text'], state=Form.feedback)
+async def process_feedback(message: types.Message, state: FSMContext):
+    print("comment")
+    await bot.send_message(USER_ID,
+                           text=f"Feedback from [{message.from_user.first_name}](tg://user?id={message.from_user.id}): {message.text}",
+                           parse_mode=ParseMode.MARKDOWN_V2)
+    await state.finish()

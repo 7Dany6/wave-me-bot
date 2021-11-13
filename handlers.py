@@ -66,13 +66,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 
 @dp.message_handler(commands="feedback", state='*')
 async def feedback(message: types.Message, state: FSMContext):
-    current_state = await state.get_state()
-    print(current_state is None)
-    if current_state is not None:
-        await state.finish()
-        print('finish')
     await bot.send_message(message.from_user.id, text=_("Leave your opinion, it will improve the bot!"))
-
 
     @dp.message_handler(content_types=["text"], state="*")
     async def process_feedback(message: types.Message):
@@ -80,7 +74,6 @@ async def feedback(message: types.Message, state: FSMContext):
         await bot.send_message(USER_ID,
                                text=f"Feedback from [{message.from_user.first_name}](tg://user?id={message.from_user.id}): {message.text}",
                                parse_mode=ParseMode.MARKDOWN_V2)
-
 
 
 @dp.message_handler(commands="care", state='*')

@@ -77,9 +77,9 @@ async def track_person(message: types.Message, state: FSMContext):
                                reply_markup=keyboard)
     else:
         await share_a_contact(message.from_user.id)
-    #await Form.tracking.set()
+    await Form.tracking.set()
 
-    @dp.message_handler(content_types=['contact', 'text'])  # deleted state Form.tracking
+    @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)  # deleted state Form.tracking
     async def find_person(message: types.Message, state: FSMContext):
         if message.text == _("I'm OK"):
             print('here')
@@ -116,7 +116,7 @@ async def track_person(message: types.Message, state: FSMContext):
             except IndexError:
                 await forwarding(message.from_user.id)
                 await bot.send_message(message.from_user.id, text='@here_i_ambot')
-            #await state.finish()
+            await state.finish()
 
 
     @dp.message_handler(content_types=["location"], state="*")
@@ -168,7 +168,6 @@ async def feedback(message: types.Message, state: FSMContext):
     print(current_state)
     if current_state:
         await state.finish()
-    print(current_state)
     await bot.send_message(message.from_user.id, text=_("Leave your opinion, it will improve the bot!"))
     await Form.feedback.set()
     current_state = await state.get_state()

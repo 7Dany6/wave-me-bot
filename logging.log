@@ -1161,3 +1161,40 @@ IndexError: list index out of range
 =======
 LOGGING
 >>>>>>> 7b9a7341c2b3ee9eeea2eb0311bd00c33ab071d4
+INFO:aiogram:Bot: HereIAm [@here_i_ambot]
+WARNING:aiogram:Updates were skipped successfully.
+INFO:aiogram.dispatcher.dispatcher:Start polling.
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-29' coro=<Dispatcher._process_polling_updates() done, defined at /home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/dispatcher.py:406> exception=IndexError('list index out of range')>
+Traceback (most recent call last):
+  File "/home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/dispatcher.py", line 414, in _process_polling_updates
+    for responses in itertools.chain.from_iterable(await self.process_updates(updates, fast)):
+  File "/home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/dispatcher.py", line 236, in process_updates
+    return await asyncio.gather(*tasks)
+  File "/home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "/home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/dispatcher.py", line 257, in process_update
+    return await self.message_handlers.notify(update.message)
+  File "/home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "/home/danek/here-i-ambot/handlers.py", line 159, in give_contact
+    await bot.send_message(chat_id=queries[message.from_user.id][-1],
+IndexError: list index out of range
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-49' coro=<Dispatcher._process_polling_updates() done, defined at /home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/dispatcher.py:406> exception=IndexError('list index out of range')>
+Traceback (most recent call last):
+  File "/home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/dispatcher.py", line 414, in _process_polling_updates
+    for responses in itertools.chain.from_iterable(await self.process_updates(updates, fast)):
+  File "/home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/dispatcher.py", line 236, in process_updates
+    return await asyncio.gather(*tasks)
+  File "/home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "/home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/dispatcher.py", line 257, in process_update
+    return await self.message_handlers.notify(update.message)
+  File "/home/danek/.local/lib/python3.8/site-packages/aiogram/dispatcher/handler.py", line 116, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+  File "/home/danek/here-i-ambot/handlers.py", line 159, in give_contact
+    await bot.send_message(chat_id=queries[message.from_user.id][-1],
+IndexError: list index out of range
+INFO:aiogram.dispatcher.dispatcher:Stop polling...
+WARNING:aiogram:Goodbye!

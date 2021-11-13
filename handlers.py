@@ -65,15 +65,17 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(commands="feedback", state='*')
-async def feedback(message: types.Message, state: FSMContext):
+async def feedback(message: types.Message):
     await bot.send_message(message.from_user.id, text=_("Leave your opinion, it will improve the bot!"))
+    await Form.feedback.set()
 
-    @dp.message_handler(content_types=["text"], state="*")
-    async def process_feedback(message: types.Message):
-        print("comment")
-        await bot.send_message(USER_ID,
-                               text=f"Feedback from [{message.from_user.first_name}](tg://user?id={message.from_user.id}): {message.text}",
-                               parse_mode=ParseMode.MARKDOWN_V2)
+@dp.message_handler(content_types=["text"], state=Form.feedback)
+async def process_feedback(message: types.Message, state: FSMContext):
+    print("comment")
+    await bot.send_message(USER_ID,
+                           text=f"Feedback from [{message.from_user.first_name}](tg://user?id={message.from_user.id}): {message.text}",
+                           parse_mode=ParseMode.MARKDOWN_V2)
+    await state.finish()
 
 
 @dp.message_handler(commands="care", state='*')

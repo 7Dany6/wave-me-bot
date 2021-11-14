@@ -26,7 +26,7 @@ last_geopositions = defaultdict(list)
 people_tracking_last_geopositions = defaultdict(list)
 
 
-@dp.message_handler(commands="start")
+@dp.message_handler(commands="start", state="*")
 async def intro_function(message):
     if database.user_exists(message.from_user.id):
         await register(message.from_user.id)

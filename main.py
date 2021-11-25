@@ -11,7 +11,7 @@ logging.basicConfig(filename="logging.log",
                     level=logging.INFO,
                     format='%(name)s %(levelname)s %(name)s %(asctime)s   '
                            '%(message)s ',
-                    datefmt='%I:%M:%S')
+                    datefmt='%H:%M:%S')
 
 loop = asyncio.get_event_loop()
 bot = Bot(BOT_TOKEN, parse_mode='HTML')

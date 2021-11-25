@@ -123,10 +123,11 @@ async def track_person(message: types.Message, state: FSMContext):
     async def give_position(message: types.Message, state: FSMContext):
         result = requests.get(url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
         json_data = result.json()
-        await bot.send_message(chat_id=queries[message.from_user.id][-1],
+        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("User [{0}](tg://user?id={1}) with number {2} is here:\n{3}").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']),
                                parse_mode=ParseMode.MARKDOWN_V2)
-        await bot.send_location(queries[message.from_user.id][-1], latitude=message['location']['latitude'],
+        await bot.send_location(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                latitude=message['location']['latitude'],
                                 longitude=message['location']['longitude'])
         if not database.user_existance(queries[message.from_user.id][-1], message.from_user.id):
             database.add_to_tracking_trackable(queries[message.from_user.id][-1], database.get_contact(queries[message.from_user.id][-1])[0][0],
@@ -144,19 +145,19 @@ async def track_person(message: types.Message, state: FSMContext):
 
     @dp.message_handler(content_types=["text"], state="*")
     async def give_contact(message: types.Message):
-        await bot.send_message(chat_id=queries[message.from_user.id][-1],
+        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("User [{0}](tg://user?id={1}) with number {2} feels OK\!").format(database.get_name(message.from_user.id)[0][0], message.from_user.id, database.get_contact(message.from_user.id)[0][0])
                                , parse_mode=ParseMode.MARKDOWN_V2)
         queries[message.from_user.id].pop()
         if len(queries[message.from_user.id]) != 0:
             await send_request(message.from_user.id,
-                         database.get_name(queries[message.from_user.id][-1])[0][0],
-                         queries[message.from_user.id][-1],
-                         database.get_contact(queries[message.from_user.id][-1])[0][0])
+                               database.get_name(queries[message.from_user.id][-1])[0][0],
+                               queries[message.from_user.id][-1],
+                               database.get_contact(queries[message.from_user.id][-1])[0][0])
 
 
 @dp.message_handler(commands='rus_instr', state="*")
-async def russian_instructure(message: types.Message, state: FSMContext):
+async def russian_instruction(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id,
                            text="Привет!\n\nУ всех нас есть люди, о которых мы проявляем заботу, но иногда это бывает слишком навязчиво...\n\nВ таких случаях я готов помочь Вам, выступив посредником в ваших отношениях\n\nС моей помощью Вы можете узнать, где тот или иной человек находится или как у него дела без прямого контакта.\n\nНажмите /start и наслаждайтесь возможностями:\n\n-/care, чтобы проверить локацию/состояние человека (через знак скрепки)\n\n-/feedback, чтобы оставить своём мнение о боте\n\nP.S. Используйте меня на смартфоне, а не на компьютере!"
                            )

@@ -85,7 +85,7 @@ class SQL:
 
     def tracking_existance(self, tracking_id):
         """
-        Check whether a person is in database or not
+        Check whether a person is in database `tracking_trackable` or not
         """
         with self.connection:
             result = self.cursor.execute("SELECT * FROM `tracking_trackable` WHERE `id_tracking` = ?", (tracking_id,)).fetchall()
@@ -104,3 +104,10 @@ class SQL:
         """
         with self.connection:
             return self.cursor.execute("SELECT `contact_trackable` FROM `tracking_trackable` WHERE `id_tracking` = ? AND `trackable_name` = ?", (tracking_id, trackable_name,)).fetchall()
+
+    def add_id_message(self, message_id, sending_id, receiving_id):
+        """
+        Adds two users and message id to the table live_location_id
+        """
+        with self.connection:
+            return self.cursor.execute("INSERT INTO `live_location_id` VALUES (?, ?, ?)", (message_id, sending_id, receiving_id)).fetchall()

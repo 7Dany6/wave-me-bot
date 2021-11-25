@@ -1,9 +1,0 @@
-<<<<<<< HEAD
-=======
-
-INFO:aiogram:Bot: FINDME [@find_me_test_bot]
-WARNING:aiogram:Updates were skipped successfully.
-INFO:aiogram.dispatcher.dispatcher:Start polling.
-INFO:aiogram.dispatcher.dispatcher:Stop polling...
-WARNING:aiogram:Goodbye!
->>>>>>> 5992a6c8c549cd6136644c851e551ee764d2e90d

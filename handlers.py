@@ -124,8 +124,8 @@ async def track_person(message: types.Message, state: FSMContext):
         result = requests.get(url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
         json_data = result.json()
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                               text=_("User [{0}](tg://user?id={1}) with number {2} is here:\n{3}").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']),
-                               parse_mode=ParseMode.MARKDOWN_V2)
+                               text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here:\n{3}").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']),
+                               parse_mode=ParseMode.HTML)  # changed parse mode
         await bot.send_location(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                 latitude=message['location']['latitude'],
                                 longitude=message['location']['longitude'])

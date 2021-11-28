@@ -111,3 +111,25 @@ class SQL:
         """
         with self.connection:
             return self.cursor.execute("INSERT INTO `live_location_id` VALUES (?, ?, ?)", (message_id, sending_id, receiving_id)).fetchall()
+
+    def add_to_received_emoji(self, id_received, id_sent):
+        """
+        Adds user to `received_emoji` table
+        """
+        with self.connection:
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, ?)", (id_received, id_sent, 1)).fetchall()
+
+    def existence_received_emoji(self, id_received):
+        """
+        Checks existence in table `received_emoji`
+        """
+        with self.connection:
+            result = self.cursor.execute("SELECT * FROM `received_emoji` WHERE `id_received` = ?", (id_received,)).fetchall()
+        return bool(result)
+
+    def increase_received_emoji_counter(self, received_id, sent_id):
+        """
+        Receives number of emojis by 1
+        """
+        with self.connection:
+            return self.cursor.execute("UPDATE `received_emoji` SET `count` = `count` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()

@@ -21,14 +21,14 @@ async def register(id: int):
 
 def throw_buttons():
     keyboards = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    button_location = types.KeyboardButton(_("Location"), request_location=True)
-    button_reject = types.KeyboardButton(_("I'm OK"))
+    button_location = types.KeyboardButton(_("Here I Am"), request_location=True)
+    button_reject = types.KeyboardButton(_("\u270C"))
     keyboards.add(button_location, button_reject)
     return keyboards
 
 async def send_request(ids: int, first_name: str, message_id:int, contact):
     await bot.send_message(ids,
-                           text=_("User [{0}](tg://user?id={1}) with number {2} wants to know how are you\.\n*Switch on your location before answer 'Location'*\.").format(first_name, message_id, contact),
+                           text=_("User [{0}](tg://user?id={1}) with number {2} wants to know how are you\.\n*Switch on your location before answer 'Here I Am'*\.").format(first_name, message_id, contact),
                            reply_markup=throw_buttons(),
                            parse_mode=ParseMode.MARKDOWN_V2)
 

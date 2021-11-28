@@ -81,7 +81,7 @@ async def track_person(message: types.Message, state: FSMContext):
 
     @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)  # deleted state Form.tracking
     async def find_person(message: types.Message, state: FSMContext):
-        if message.text == _("I'm OK"):
+        if message.text == _("\u270C"):
             print('here')
             await give_contact(message=message)
         else:
@@ -146,8 +146,16 @@ async def track_person(message: types.Message, state: FSMContext):
     @dp.message_handler(content_types=["text"], state="*")
     async def give_contact(message: types.Message):
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                               text=_("User [{0}](tg://user?id={1}) with number {2} feels OK\!").format(database.get_name(message.from_user.id)[0][0], message.from_user.id, database.get_contact(message.from_user.id)[0][0])
+                               text=_("\u270C"))
+        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                               text=_("From user [{0}](tg://user?id={1}) with number {2}\!").format(
+                                   database.get_name(message.from_user.id)[0][0], message.from_user.id,
+                                   database.get_contact(message.from_user.id)[0][0])
                                , parse_mode=ParseMode.MARKDOWN_V2)
+        if not database.existence_received_emoji(queries[message.from_user.id][-1]):
+            database.add_to_received_emoji(queries[message.from_user.id][-1], message.from_user.id)
+        else:
+            database.increase_received_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
         queries[message.from_user.id].pop()
         if len(queries[message.from_user.id]) != 0:
             await send_request(message.from_user.id,
@@ -161,6 +169,29 @@ async def russian_instruction(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id,
                            text="Привет!\n\nУ всех нас есть люди, о которых мы проявляем заботу, но иногда это бывает слишком навязчиво...\n\nВ таких случаях я готов помочь Вам, выступив посредником в ваших отношениях\n\nС моей помощью Вы можете узнать, где тот или иной человек находится или как у него дела без прямого контакта.\n\nНажмите /start и наслаждайтесь возможностями:\n\n-/care, чтобы проверить локацию/состояние человека (через знак скрепки)\n\n-/feedback, чтобы оставить своём мнение о боте\n\nP.S. Используйте меня на смартфоне, а не на компьютере!"
                            )
+
+
+@dp.message_handler(commands="received", state="*")
+async def return_number_received_emojis(message: types.Message):
+    print('return received emojis')
+    if not database.existence_received_emoji(message.from_user.id):
+        await bot.send_message(message.from_user.id,
+                               text=_("You haven't received {0}, send someone a request by clicking /care!").format('\u270C'))
+    else:
+        await bot.send_message(message.from_user.id,
+                               text=_("{1} received:{0}!").format(database.count_received_emojis(message.from_user.id)[0][0], '\u270C'))
+
+
+@dp.message_handler(commands="sent", state="*")
+async def return_number_sent_emojis(message: types.Message):
+    print('return sent emojis')
+    if not database.existence_received_emoji(message.from_user.id):
+        await bot.send_message(message.from_user.id,
+                               text=_("You haven't sent {0} yet!").format('\u270C'))
+    else:
+        await bot.send_message(message.from_user.id,
+                               text=_("{1} sent:{0}!").format(
+                                   database.count_sent_emojis(message.from_user.id)[0][0], '\u270C'))
 
 
 @dp.message_handler(commands="feedback", state='*')
@@ -181,3 +212,4 @@ async def process_feedback(message: types.Message, state: FSMContext):
                            text=f"Feedback from [{message.from_user.first_name}](tg://user?id={message.from_user.id}): {message.text}",
                            parse_mode=ParseMode.MARKDOWN_V2)
     await state.finish()
+

@@ -77,8 +77,8 @@ msgstr "Пользователь <a href='tg://user?id={1}'>{0}</a> с номе�
 msgid "Here I Am"
 msgstr "Я здесь"
 
-# handlers.py line 149
-msgid ""From user <a href='tg://user?id={1}'>{0}</a> with number {2}!""
+# handlers.py line 151
+msgid "From user <a href='tg://user?id={1}'>{0}</a> with number {2}!"
 msgstr "От [{0}](tg://user?id={1}) с номером {2}!"
 
 # handlers.py line 179

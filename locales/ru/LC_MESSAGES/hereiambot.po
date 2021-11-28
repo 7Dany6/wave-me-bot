@@ -78,8 +78,8 @@ msgid "Here I Am"
 msgstr "Я здесь"
 
 # handlers.py line 149
-msgid "From user [{0}](tg://user?id={1}) with number {2}\!"
-msgstr "От [{0}](tg://user?id={1}) с номером {2}\!"
+msgid ""From user <a href='tg://user?id={1}'>{0}</a> with number {2}!""
+msgstr "От [{0}](tg://user?id={1}) с номером {2}!"
 
 # handlers.py line 179
 msgid "You haven't received {0}, send someone a request by clicking /care!"

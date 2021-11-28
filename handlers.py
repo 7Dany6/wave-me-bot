@@ -81,7 +81,7 @@ async def track_person(message: types.Message, state: FSMContext):
 
     @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)  # deleted state Form.tracking
     async def find_person(message: types.Message, state: FSMContext):
-        if message.text == _("I'm OK"):
+        if message.text == _("\u270C"):
             print('here')
             await give_contact(message=message)
         else:
@@ -146,7 +146,11 @@ async def track_person(message: types.Message, state: FSMContext):
     @dp.message_handler(content_types=["text"], state="*")
     async def give_contact(message: types.Message):
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                               text=_("User [{0}](tg://user?id={1}) with number {2} feels OK\!").format(database.get_name(message.from_user.id)[0][0], message.from_user.id, database.get_contact(message.from_user.id)[0][0])
+                               text=_("\u270C"))
+        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                               text=_("From user [{0}](tg://user?id={1}) with number {2}\!").format(
+                                   database.get_name(message.from_user.id)[0][0], message.from_user.id,
+                                   database.get_contact(message.from_user.id)[0][0])
                                , parse_mode=ParseMode.MARKDOWN_V2)
         queries[message.from_user.id].pop()
         if len(queries[message.from_user.id]) != 0:

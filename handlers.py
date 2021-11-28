@@ -148,7 +148,7 @@ async def track_person(message: types.Message, state: FSMContext):
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("\u270C"))
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                               text=_("From user <a href='tg://user?id={1}'>{0}</a> with number {2}\!").format(
+                               text=_("From user <a href='tg://user?id={1}'>{0}</a> with number {2}!").format(
                                    database.get_name(message.from_user.id)[0][0], message.from_user.id,
                                    database.get_contact(message.from_user.id)[0][0])
                                , parse_mode=ParseMode.HTML)

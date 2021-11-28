@@ -134,7 +134,7 @@ class SQL:
         with self.connection:
             return self.cursor.execute("UPDATE `received_emoji` SET `count` = `count` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()
 
-    def count_emojis(self, received_id):
+    def count_received_emojis(self, received_id):
         """
         Counts number of all received emojis
         """
@@ -146,3 +146,16 @@ class SQL:
                                        "SELECT `number`"
                                        "FROM `count_emojis`"
                                        "WHERE `id_received` = ?",(received_id, )).fetchall()
+
+    def count_sent_emojis(self, received_id):
+        """
+        Counts number of all received emojis
+        """
+        with self.connection:
+            return self.cursor.execute("WITH `count_emojis` AS"
+                                       "(SELECT SUM(`count`) as number, `id_sent`"
+                                       "FROM `received_emoji`"
+                                       "GROUP BY `id_sent`)"
+                                       "SELECT `number`"
+                                       "FROM `count_emojis`"
+                                       "WHERE `id_sent` = ?",(received_id, )).fetchall()

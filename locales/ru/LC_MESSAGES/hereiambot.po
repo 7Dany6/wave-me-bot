@@ -81,5 +81,9 @@ msgstr "Я здесь"
 msgid "From user [{0}](tg://user?id={1}) with number {2}\!"
 msgstr "От [{0}](tg://user?id={1}) с номером {2}\!"
 
+# handlers.py line 198
+msgid "You haven't received emojis, send someone a request by clicking /care!"
+msgstr "У Вас пока что нет эмоджи, отправьте кому-нибудь запрос, нажав /care!"
+
 
 

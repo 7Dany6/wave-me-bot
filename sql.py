@@ -139,4 +139,8 @@ class SQL:
         Counts number of all received emojis
         """
         with self.connection:
-            return self.cursor.execute("SELECT COUNT(`count`), `id_received` FROM `received_emoji` WHERE `id_received` = ? GROUP BY `id_received`",(received_id, )).fetchall()
+            return self.cursor.execute("WITH `count_emojis` AS"
+                                       "(SELECT COUNT(`count`) as number, `id_received` FROM `received_emoji` GROUP BY `id_received`"
+                                       "SELECT number"
+                                       "FROM `count_emojis"
+                                       "WHERE `id_received` = ?`",(received_id, )).fetchall()

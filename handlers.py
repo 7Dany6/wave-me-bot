@@ -171,6 +171,16 @@ async def russian_instruction(message: types.Message, state: FSMContext):
                            )
 
 
+@dp.message_handler(commands="received", state="*")
+async def return_number_emojis(message: types.Message):
+    print('return emojis')
+    if not database.existence_received_emoji(message.from_user.id):
+        await bot.send_message(message.from_user.id,
+                               text=_("You haven't received emojis, send someone a request by clicking /care!"))
+    else:
+        await bot.send_message(message.from_user.id,
+                               text=_("You've got {} emojis!").format(database.count_emojis(message.from_user.id)[0][0]))
+
 @dp.message_handler(commands="feedback", state='*')
 async def feedback(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
@@ -189,3 +199,4 @@ async def process_feedback(message: types.Message, state: FSMContext):
                            text=f"Feedback from [{message.from_user.first_name}](tg://user?id={message.from_user.id}): {message.text}",
                            parse_mode=ParseMode.MARKDOWN_V2)
     await state.finish()
+

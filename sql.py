@@ -140,7 +140,9 @@ class SQL:
         """
         with self.connection:
             return self.cursor.execute("WITH `count_emojis` AS"
-                                       "(SELECT COUNT(`count`) as number, `id_received` FROM `received_emoji` GROUP BY `id_received`"
-                                       "SELECT number"
-                                       "FROM `count_emojis"
-                                       "WHERE `id_received` = ?`",(received_id, )).fetchall()
+                                       "(SELECT SUM(`count`) as number, `id_received`"
+                                       "FROM `received_emoji`"
+                                       "GROUP BY `id_received`)"
+                                       "SELECT `number`"
+                                       "FROM `count_emojis`"
+                                       "WHERE `id_received` = ?",(received_id, )).fetchall()

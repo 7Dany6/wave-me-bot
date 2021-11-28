@@ -152,6 +152,10 @@ async def track_person(message: types.Message, state: FSMContext):
                                    database.get_name(message.from_user.id)[0][0], message.from_user.id,
                                    database.get_contact(message.from_user.id)[0][0])
                                , parse_mode=ParseMode.MARKDOWN_V2)
+        if not database.existence_received_emoji(queries[message.from_user.id][-1]):
+            database.add_to_received_emoji(queries[message.from_user.id][-1], message.from_user.id)
+        else:
+            database.increase_received_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
         queries[message.from_user.id].pop()
         if len(queries[message.from_user.id]) != 0:
             await send_request(message.from_user.id,

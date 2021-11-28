@@ -133,3 +133,10 @@ class SQL:
         """
         with self.connection:
             return self.cursor.execute("UPDATE `received_emoji` SET `count` = `count` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()
+
+    def count_emojis(self, received_id):
+        """
+        Counts number of all received emojis
+        """
+        with self.connection:
+            return self.cursor.execute("SELECT COUNT(`count`), `id_received` FROM `received_emoji` WHERE `id_received` = ?",(received_id, )).fetchall()

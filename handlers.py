@@ -172,14 +172,27 @@ async def russian_instruction(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(commands="received", state="*")
-async def return_number_emojis(message: types.Message):
-    print('return emojis')
+async def return_number_received_emojis(message: types.Message):
+    print('return received emojis')
     if not database.existence_received_emoji(message.from_user.id):
         await bot.send_message(message.from_user.id,
-                               text=_("You haven't received emojis, send someone a request by clicking /care!"))
+                               text=_("You haven't received {0}, send someone a request by clicking /care!").format('\u270C'))
     else:
         await bot.send_message(message.from_user.id,
-                               text=_("You've got {} emojis!").format(database.count_emojis(message.from_user.id)[0][0]))
+                               text=_("{1} received:{0}!").format(database.count_received_emojis(message.from_user.id)[0][0], '\u270C'))
+
+
+@dp.message_handler(commands="sent", state="*")
+async def return_number_sent_emojis(message: types.Message):
+    print('return sent emojis')
+    if not database.existence_received_emoji(message.from_user.id):
+        await bot.send_message(message.from_user.id,
+                               text=_("You haven't sent {0} yet!").format('\u270C'))
+    else:
+        await bot.send_message(message.from_user.id,
+                               text=_("{1} sent:{0}!").format(
+                                   database.count_sent_emojis(message.from_user.id)[0][0], '\u270C'))
+
 
 @dp.message_handler(commands="feedback", state='*')
 async def feedback(message: types.Message, state: FSMContext):

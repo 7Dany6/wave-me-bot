@@ -81,13 +81,21 @@ msgstr "Я здесь"
 msgid "From user [{0}](tg://user?id={1}) with number {2}\!"
 msgstr "От [{0}](tg://user?id={1}) с номером {2}\!"
 
-# handlers.py line 198
-msgid "You haven't received emojis, send someone a request by clicking /care!"
-msgstr "У Вас пока что нет эмоджи, отправьте кому-нибудь запрос, нажав /care!"
+# handlers.py line 179
+msgid "You haven't received {0}, send someone a request by clicking /care!"
+msgstr "У Вас пока что нет {0}, отправьте кому-нибудь запрос, нажав /care!"
 
 # handlers.py line 182
-msgid "You've got {} emojis!"
-msgstr "У Вас {} эмоджи!"
+msgid "{1} received:{0}!"
+msgstr "Вы получили {0} {1}!"
+
+# handlers.py line 190
+msgid "You haven't sent {0} yet!"
+msgstr "Вы пока не отправляли {0}!"
+
+# handlerspy line 193
+msgid "{1} sent:{0}!"
+msgstr "Вы отправили {0} {1}!"
 
 
 

@@ -145,17 +145,19 @@ async def track_person(message: types.Message, state: FSMContext):
 
     @dp.message_handler(content_types=["text"], state="*")
     async def give_contact(message: types.Message):
+        if not database.existence_received_emoji(queries[message.from_user.id][-1]):
+            database.add_to_received_emoji(queries[message.from_user.id][-1], message.from_user.id)
+        else:
+            database.increase_received_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("\u270C"))
+        print('sent emoji')
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("From user <a href='tg://user?id={1}'>{0}</a> with number {2}!").format(
                                    database.get_name(message.from_user.id)[0][0], message.from_user.id,
                                    database.get_contact(message.from_user.id)[0][0])
                                , parse_mode=ParseMode.HTML)
-        if not database.existence_received_emoji(queries[message.from_user.id][-1]):
-            database.add_to_received_emoji(queries[message.from_user.id][-1], message.from_user.id)
-        else:
-            database.increase_received_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+        print('text below emoji')
         queries[message.from_user.id].pop()
         if len(queries[message.from_user.id]) != 0:
             await send_request(message.from_user.id,

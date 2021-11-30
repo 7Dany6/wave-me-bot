@@ -119,12 +119,12 @@ class SQL:
         with self.connection:
             return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, ?)", (id_received, id_sent, 1)).fetchall()
 
-    def existence_received_emoji(self, id_received):
+    def existence_received_emoji(self, id_received, id_sent):
         """
         Checks existence in table `received_emoji`
         """
         with self.connection:
-            result = self.cursor.execute("SELECT * FROM `received_emoji` WHERE `id_received` = ?", (id_received,)).fetchall()
+            result = self.cursor.execute("SELECT * FROM `received_emoji` WHERE `id_received` = ? AND id_sent = ?", (id_received, id_sent, )).fetchall()
         return bool(result)
 
     def increase_received_emoji_counter(self, received_id, sent_id):
@@ -159,3 +159,19 @@ class SQL:
                                        "SELECT `number`"
                                        "FROM `count_emojis`"
                                        "WHERE `id_sent` = ?",(received_id, )).fetchall()
+
+    def existence_received_emoji_user_received(self, id_received):
+        """
+        Checks existence in table `received_emoji`
+        """
+        with self.connection:
+            result = self.cursor.execute("SELECT * FROM `received_emoji` WHERE `id_received` = ?", (id_received,)).fetchall()
+        return bool(result)
+
+    def existence_received_emoji_user_sent(self, id_sent):
+        """
+        Checks existence in table `received_emoji`
+        """
+        with self.connection:
+            result = self.cursor.execute("SELECT * FROM `received_emoji` WHERE `id_sent` = ?", (id_sent,)).fetchall()
+        return bool(result)

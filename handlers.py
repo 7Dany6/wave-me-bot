@@ -145,7 +145,7 @@ async def track_person(message: types.Message, state: FSMContext):
 
     @dp.message_handler(content_types=["text"], state="*")
     async def give_contact(message: types.Message):
-        if not database.existence_received_emoji(queries[message.from_user.id][-1]):
+        if not database.existence_received_emoji(queries[message.from_user.id][-1], message.from_user.id):
             database.add_to_received_emoji(queries[message.from_user.id][-1], message.from_user.id)
         else:
             database.increase_received_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
@@ -176,7 +176,7 @@ async def russian_instruction(message: types.Message, state: FSMContext):
 @dp.message_handler(commands="received", state="*")
 async def return_number_received_emojis(message: types.Message):
     print('return received emojis')
-    if not database.existence_received_emoji(message.from_user.id):
+    if not database.existence_received_emoji_user_received(message.from_user.id):
         await bot.send_message(message.from_user.id,
                                text=_("You haven't received {0}, send someone a request by clicking /care!").format('\u270C'))
     else:
@@ -187,7 +187,7 @@ async def return_number_received_emojis(message: types.Message):
 @dp.message_handler(commands="sent", state="*")
 async def return_number_sent_emojis(message: types.Message):
     print('return sent emojis')
-    if not database.existence_received_emoji(message.from_user.id):
+    if not database.existence_received_emoji_user_sent(message.from_user.id):
         await bot.send_message(message.from_user.id,
                                text=_("You haven't sent {0} yet!").format('\u270C'))
     else:

@@ -96,7 +96,10 @@ class SQL:
         Retrieves all trackable people by tracking_id
         """
         with self.connection:
-            return self.cursor.execute("SELECT `contact_trackable` FROM `tracking_trackable` WHERE `id_tracking` = ? ORDER BY `counter` DESC LIMIT 3", (tracking_id,)).fetchall()
+            return self.cursor.execute("SELECT `contact_trackable`"
+                                       " FROM `tracking_trackable`"
+                                       " WHERE `id_tracking` = ?"
+                                       " ORDER BY `counter` DESC LIMIT 5", (tracking_id,)).fetchall()
 
     def get_contact_check(self, tracking_id, trackable_name):
         """

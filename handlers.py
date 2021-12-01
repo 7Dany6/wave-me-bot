@@ -149,6 +149,11 @@ async def track_person(message: types.Message, state: FSMContext):
             database.add_to_received_emoji(queries[message.from_user.id][-1], message.from_user.id)
         else:
             database.increase_received_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+        if not database.user_existance(queries[message.from_user.id][-1], message.from_user.id):
+            database.add_to_tracking_trackable(queries[message.from_user.id][-1], database.get_contact(queries[message.from_user.id][-1])[0][0],
+                                               message.from_user.id, database.get_contact(message.from_user.id)[0][0], database.get_name(message.from_user.id)[0][0])
+        else:
+            database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("\u270C"))
         print('sent emoji')

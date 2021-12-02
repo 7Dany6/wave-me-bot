@@ -57,8 +57,8 @@ msgid "I'm OK"
 msgstr "Я в порядке"
 
 # functions.py line 24
-msgid "User [{0}](tg://user?id={1}) with number {2} wants to know how are you\.\n*Switch on your location before answer 'Here I Am'*\."
-msgstr "Пользователь [{0}](tg://user?id={1}) с номером {2} хочет узнать, как Вы\.\n*Включите локацию перед тем, как ответить 'Я здесь'*\."
+msgid "User [{0}](tg://user?id={1}) with number {2} waves {3} to you\.\n*Switch on your location before answer 'Here I Am'*\."
+msgstr "Пользователь [{0}](tg://user?id={1}) с номером {2} помахал {3} Вам\.\n*Включите локацию перед тем, как ответить 'Я здесь'*\."
 
 
 # handlers.py line 140

@@ -28,7 +28,7 @@ def throw_buttons():
 
 async def send_request(ids: int, first_name: str, message_id:int, contact):
     await bot.send_message(ids,
-                           text=_("User [{0}](tg://user?id={1}) with number {2} wants to know how are you\.\n*Switch on your location before answer 'Here I Am'*\.").format(first_name, message_id, contact),
+                           text=_("User [{0}](tg://user?id={1}) with number {2} waves {3} to you\.\n*Switch on your location before answer 'Here I Am'*\.").format(first_name, message_id, contact, '\u270B'),
                            reply_markup=throw_buttons(),
                            parse_mode=ParseMode.MARKDOWN_V2)
 

@@ -83,7 +83,7 @@ async def track_person(message: types.Message, state: FSMContext):
     async def find_person(message: types.Message, state: FSMContext):
         if message.text == _("\u270C"):
             print('here')
-            await give_contact(message=message)
+            await send_emoji(message=message)
         else:
             await request_acceptance(message.from_user.id)
             try:
@@ -144,7 +144,7 @@ async def track_person(message: types.Message, state: FSMContext):
 
 
     @dp.message_handler(content_types=["text"], state="*")
-    async def give_contact(message: types.Message):
+    async def send_emoji(message: types.Message):
         if not database.existence_received_emoji(queries[message.from_user.id][-1], message.from_user.id):
             database.add_to_received_emoji(queries[message.from_user.id][-1], message.from_user.id)
         else:
@@ -154,8 +154,13 @@ async def track_person(message: types.Message, state: FSMContext):
                                                message.from_user.id, database.get_contact(message.from_user.id)[0][0], database.get_name(message.from_user.id)[0][0])
         else:
             database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
-        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                               text=_("\u270C"))
+        if message.text[:-1] == 'Всё идёт по плану':
+            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                   text=_("\u270C"))
+        elif message.text[:-1] == 'Опять метель':
+            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                   text=_("\u2744"))
+        print(message.text[-1])
         print('sent emoji')
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("From user <a href='tg://user?id={1}'>{0}</a> with number {2}!").format(
@@ -171,11 +176,11 @@ async def track_person(message: types.Message, state: FSMContext):
                                database.get_contact(queries[message.from_user.id][-1])[0][0])
 
 
-@dp.message_handler(commands='rus_instr', state="*")
-async def russian_instruction(message: types.Message, state: FSMContext):
+@dp.message_handler(commands='instr', state="*")
+async def instruction(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id,
-                           text="Привет!\n\nУ всех нас есть люди, о которых мы проявляем заботу, теперь есть возможность делать это, не отвлекая близких людей, послав им запрос всего одной кнопкой!\n\nЯ готов помочь Вам, выступив посредником в ваших отношениях\n\nС моей помощью Вы можете узнать, где тот или иной человек находится или получить от него эмоджи.\n\nНажмите /start и наслаждайтесь возможностями:\n\n-/care, чтобы проверить локацию/состояние человека (через знак скрепки)\n\n-/feedback, чтобы оставить своём мнение о боте\n\n-/sent, чтобы посмотреть, сколько эмоджи Вы отправили\n\n-/received, чтобы посмотреть, сколько эмоджи Вы получили\n\nP.S. Используйте меня на смартфоне, а не на компьютере!"
-                           )
+                           text=_("Hi!\n\nWe all have people to care about and now you can do it not disturbing them sending a request with only one button!\n\nI'm glad to help you out\n\nWith my helping hand you can get where this ot that person is or you can get an emoji with his state.\n\nPress /start and enjoy:\n\n-/care to check location/state (through clip symbol)\n\n-/feedback to leave your opinion about bot\n\n-/sent to know how many emojis you've sent\n\n-/received to know how many emojis you've received\n\nP.S. Use me via smartphone, not PC!"
+                           ))
 
 
 @dp.message_handler(commands="received", state="*")
@@ -183,10 +188,10 @@ async def return_number_received_emojis(message: types.Message):
     print('return received emojis')
     if not database.existence_received_emoji_user_received(message.from_user.id):
         await bot.send_message(message.from_user.id,
-                               text=_("You haven't received {0}, send someone a request by clicking /care!").format('\u270C'))
+                               text=_("You haven't received emojis, send someone a request by clicking /care!"))
     else:
         await bot.send_message(message.from_user.id,
-                               text=_("{1} received:{0}!").format(database.count_received_emojis(message.from_user.id)[0][0], '\u270C'))
+                               text=_("{1} received emojis!").format(database.count_received_emojis(message.from_user.id)[0][0]))
 
 
 @dp.message_handler(commands="sent", state="*")
@@ -194,11 +199,11 @@ async def return_number_sent_emojis(message: types.Message):
     print('return sent emojis')
     if not database.existence_received_emoji_user_sent(message.from_user.id):
         await bot.send_message(message.from_user.id,
-                               text=_("You haven't sent {0} yet!").format('\u270C'))
+                               text=_("You haven't sent emojis yet!"))
     else:
         await bot.send_message(message.from_user.id,
-                               text=_("{1} sent:{0}!").format(
-                                   database.count_sent_emojis(message.from_user.id)[0][0], '\u270C'))
+                               text=_("{1} sent emojis!").format(
+                                   database.count_sent_emojis(message.from_user.id)[0][0]))
 
 
 @dp.message_handler(commands="feedback", state='*')

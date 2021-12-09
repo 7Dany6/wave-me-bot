@@ -17,8 +17,8 @@ msgid "Thank you for the registration!"
 msgstr "Спасибо за регистрацию!"
 
 # functions.py line 48
-msgid "Welcome, {0}! \nPlease, choose your further action from menu!"
-msgstr "Добро пожаловать, {0}!\nВ меню доступна инструкция на русском.\nПожалуйста, выберите действие из меню!"
+msgid "Welcome, {0}!\nYou can find instruction in menu!\nPlease, choose your further action from menu!"
+msgstr "Добро пожаловать, {0}!\nВ меню доступна инструкция.\nПожалуйста, выберите действие из меню!"
 
 # functions.py line 53
 msgid "Your action has been cancelled"
@@ -83,20 +83,32 @@ msgstr "От <a href='tg://user?id={1}'>{0}</a> с номером {2}!"
 
 
 # handlers.py line 179
-msgid "You haven't received {0}, send someone a request by clicking /care!"
-msgstr "У Вас пока что нет {0}, отправьте кому-нибудь запрос, нажав /care!"
+msgid "You haven't received emojis, send someone a request by clicking /care!"
+msgstr "У Вас пока что нет эмоджи, отправьте кому-нибудь запрос, нажав /care!"
 
 # handlers.py line 182
-msgid "{1} received:{0}!"
-msgstr "Вы получили {0} {1}!"
+msgid "{1} received emojis!"
+msgstr "Вы получили {0} эмоджи!"
 
 # handlers.py line 190
-msgid "You haven't sent {0} yet!"
-msgstr "Вы пока не отправляли {0}!"
+msgid "You haven't sent emojis yet!"
+msgstr "Вы пока не отправляли эмоджи!"
 
-# handlerspy line 193
-msgid "{1} sent:{0}!"
-msgstr "Вы отправили {0} {1}!"
+# handlers.py line 193
+msgid "{1} sent emojis!"
+msgstr "Вы отправили {0} эмоджи!"
+
+# functions.py line 25
+msgid "Everything is great{0}"
+msgstr "Всё идёт по плану{0}"
+
+# functions.py line 26
+msgid "Again snowstorm{0}"
+msgstr "Опять метель{0}"
+
+# handlers.py line 177
+msgid "Hi!\n\nWe all have people to care about and now you can do it not disturbing them sending a request with only one button!\n\nI'm glad to help you out\n\nWith my helping hand you can get where this ot that person is or you can get an emoji with his state.\n\nPress /start and enjoy:\n\n-/care to check location/state (through clip symbol)\n\n-/feedback to leave your opinion about bot\n\n-/sent to know how many emojis you've sent\n\n-/received to know how many emojis you've received\n\nP.S. Use me via smartphone, not PC!"
+msgstr "Привет!\n\nУ всех нас есть люди, о которых мы проявляем заботу, теперь есть возможность делать это, не отвлекая близких людей, послав им запрос всего одной кнопкой!\n\nЯ готов помочь Вам, выступив посредником в ваших отношениях\n\nС моей помощью Вы можете узнать, где тот или иной человек находится или получить от него эмоджи.\n\nНажмите /start и наслаждайтесь возможностями:\n\n-/care, чтобы проверить локацию/состояние человека (через знак скрепки)\n\n-/feedback, чтобы оставить своём мнение о боте\n\n-/sent, чтобы посмотреть, сколько эмоджи Вы отправили\n\n-/received, чтобы посмотреть, сколько эмоджи Вы получили\n\nP.S. Используйте меня на смартфоне, а не на компьютере!"
 
 
 

@@ -22,8 +22,9 @@ async def register(id: int):
 def throw_buttons():
     keyboards = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     button_location = types.KeyboardButton(_("Here I Am"), request_location=True)
-    button_reject = types.KeyboardButton(_("\u270C"))
-    keyboards.add(button_location, button_reject)
+    button_victory = types.KeyboardButton(_("Everything is great{0}").format("\u270C"))
+    button_snow = types.KeyboardButton(_("Again snowstorm{0}").format("\u2744"))
+    keyboards.add(button_location, button_victory, button_snow)
     return keyboards
 
 async def send_request(ids: int, first_name: str, message_id:int, contact):
@@ -48,7 +49,7 @@ async def thank(id: int):
 
 async def action_after_registration(id: int, first_name: str):
     await bot.send_message(id,
-                           text=_("Welcome, {0}! \nPlease, choose your further action from menu!").format(
+                           text=_("Welcome, {0}!\nYou can find instruction in menu!\nPlease, choose your further action from menu!").format(
                                first_name),
                            )
 

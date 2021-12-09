@@ -17,8 +17,8 @@ msgid "Thank you for the registration!"
 msgstr "Спасибо за регистрацию!"
 
 # functions.py line 48
-msgid "Welcome, {0}! \nPlease, choose your further action from menu!"
-msgstr "Добро пожаловать, {0}!\nВ меню доступна инструкция на русском.\nПожалуйста, выберите действие из меню!"
+msgid "Welcome, {0}!\nYou can find instruction in menu!\nPlease, choose your further action from menu!"
+msgstr "Добро пожаловать, {0}!\nВ меню доступна инструкция.\nПожалуйста, выберите действие из меню!"
 
 # functions.py line 53
 msgid "Your action has been cancelled"
@@ -94,9 +94,13 @@ msgstr "Вы получили {0} {1}!"
 msgid "You haven't sent {0} yet!"
 msgstr "Вы пока не отправляли {0}!"
 
-# handlerspy line 193
+# handlers.py line 193
 msgid "{1} sent:{0}!"
 msgstr "Вы отправили {0} {1}!"
+
+# functions.py line 25
+msgid "Everything is great{0}"
+msgstr "Всё идёт по плану{0}"
 
 
 

@@ -83,7 +83,7 @@ async def track_person(message: types.Message, state: FSMContext):
     async def find_person(message: types.Message, state: FSMContext):
         if message.text == _("\u270C"):
             print('here')
-            await give_contact(message=message)
+            await send_emoji(message=message)
         else:
             await request_acceptance(message.from_user.id)
             try:
@@ -144,7 +144,7 @@ async def track_person(message: types.Message, state: FSMContext):
 
 
     @dp.message_handler(content_types=["text"], state="*")
-    async def give_contact(message: types.Message):
+    async def send_emoji(message: types.Message):
         if not database.existence_received_emoji(queries[message.from_user.id][-1], message.from_user.id):
             database.add_to_received_emoji(queries[message.from_user.id][-1], message.from_user.id)
         else:
@@ -171,7 +171,7 @@ async def track_person(message: types.Message, state: FSMContext):
                                database.get_contact(queries[message.from_user.id][-1])[0][0])
 
 
-@dp.message_handler(commands='rus_instr', state="*")
+@dp.message_handler(commands='instr', state="*")
 async def russian_instruction(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id,
                            text="Привет!\n\nУ всех нас есть люди, о которых мы проявляем заботу, теперь есть возможность делать это, не отвлекая близких людей, послав им запрос всего одной кнопкой!\n\nЯ готов помочь Вам, выступив посредником в ваших отношениях\n\nС моей помощью Вы можете узнать, где тот или иной человек находится или получить от него эмоджи.\n\nНажмите /start и наслаждайтесь возможностями:\n\n-/care, чтобы проверить локацию/состояние человека (через знак скрепки)\n\n-/feedback, чтобы оставить своём мнение о боте\n\n-/sent, чтобы посмотреть, сколько эмоджи Вы отправили\n\n-/received, чтобы посмотреть, сколько эмоджи Вы получили\n\nP.S. Используйте меня на смартфоне, а не на компьютере!"

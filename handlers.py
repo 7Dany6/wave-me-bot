@@ -160,8 +160,6 @@ async def track_person(message: types.Message, state: FSMContext):
         elif message.text[:-1] == 'Опять метель':
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                    text=_("\u2744"))
-        print(message.text[-1])
-        print('sent emoji')
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("From user <a href='tg://user?id={1}'>{0}</a> with number {2}!").format(
                                    database.get_name(message.from_user.id)[0][0], message.from_user.id,

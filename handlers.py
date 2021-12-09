@@ -154,8 +154,13 @@ async def track_person(message: types.Message, state: FSMContext):
                                                message.from_user.id, database.get_contact(message.from_user.id)[0][0], database.get_name(message.from_user.id)[0][0])
         else:
             database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
-        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                               text=_("\u270C"))
+        if message.text[:-1] == 'Всё идёт по плану':
+            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                   text=_("\u270C"))
+        elif message.text[:-1] == 'Опять метель':
+            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                   text=_("\u2744"))
+        print(message.text[-1])
         print('sent emoji')
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("From user <a href='tg://user?id={1}'>{0}</a> with number {2}!").format(
@@ -183,10 +188,10 @@ async def return_number_received_emojis(message: types.Message):
     print('return received emojis')
     if not database.existence_received_emoji_user_received(message.from_user.id):
         await bot.send_message(message.from_user.id,
-                               text=_("You haven't received {0}, send someone a request by clicking /care!").format('\u270C'))
+                               text=_("You haven't received emojis, send someone a request by clicking /care!"))
     else:
         await bot.send_message(message.from_user.id,
-                               text=_("{1} received:{0}!").format(database.count_received_emojis(message.from_user.id)[0][0], '\u270C'))
+                               text=_("{1} received emojis!").format(database.count_received_emojis(message.from_user.id)[0][0]))
 
 
 @dp.message_handler(commands="sent", state="*")
@@ -194,11 +199,11 @@ async def return_number_sent_emojis(message: types.Message):
     print('return sent emojis')
     if not database.existence_received_emoji_user_sent(message.from_user.id):
         await bot.send_message(message.from_user.id,
-                               text=_("You haven't sent {0} yet!").format('\u270C'))
+                               text=_("You haven't sent emojis yet!"))
     else:
         await bot.send_message(message.from_user.id,
-                               text=_("{1} sent:{0}!").format(
-                                   database.count_sent_emojis(message.from_user.id)[0][0], '\u270C'))
+                               text=_("{1} sent emojis!").format(
+                                   database.count_sent_emojis(message.from_user.id)[0][0]))
 
 
 @dp.message_handler(commands="feedback", state='*')

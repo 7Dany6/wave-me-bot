@@ -81,7 +81,7 @@ async def track_person(message: types.Message, state: FSMContext):
 
     @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)  # deleted state Form.tracking
     async def find_person(message: types.Message, state: FSMContext):
-        if message.text == _("\u270C"):
+        if message.text[:-1] in ('Всё идёт по плану', 'Опять метель'):
             print('here')
             await send_emoji(message=message)
         else:

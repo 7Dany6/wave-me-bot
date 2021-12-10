@@ -100,19 +100,40 @@ class SQL:
         with self.connection:
             return self.cursor.execute("SELECT `contact_trackable` FROM `tracking_trackable` WHERE `id_tracking` = ? AND `trackable_name` = ?", (tracking_id, trackable_name,)).fetchall()
 
-    def add_id_message(self, message_id, sending_id, receiving_id):
-        """
-        Adds two users and message id to the table live_location_id
-        """
-        with self.connection:
-            return self.cursor.execute("INSERT INTO `live_location_id` VALUES (?, ?, ?)", (message_id, sending_id, receiving_id)).fetchall()
-
-    def add_to_received_emoji(self, id_received, id_sent):
+    def add_to_received_emoji_if_victory(self, id_received, id_sent):
         """
         Adds user to `received_emoji` table
         """
         with self.connection:
-            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, ?)", (id_received, id_sent, 1)).fetchall()
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 1, 0, 0, 0, 0)", (id_received, id_sent,)).fetchall()
+
+    def add_to_received_emoji_if_snowflake(self, id_received, id_sent):
+        """
+        Adds user to `received_emoji` table
+        """
+        with self.connection:
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 0, 1, 0, 0)", (id_received, id_sent,)).fetchall()
+
+    def add_to_received_emoji_if_cold(self, id_received, id_sent):
+        """
+        Adds user to `received_emoji` table
+        """
+        with self.connection:
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 1, 0, 0, 0)", (id_received, id_sent,)).fetchall()
+
+    def add_to_received_emoji_if_snowman(self, id_received, id_sent):
+        """
+        Adds user to `received_emoji` table
+        """
+        with self.connection:
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 0, 0, 1, 0)", (id_received, id_sent,)).fetchall()
+
+    def add_to_received_emoji_if_fire(self, id_received, id_sent):
+        """
+        Adds user to `received_emoji` table
+        """
+        with self.connection:
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 0, 0, 0, 1)", (id_received, id_sent,)).fetchall()
 
     def existence_received_emoji(self, id_received, id_sent):
         """

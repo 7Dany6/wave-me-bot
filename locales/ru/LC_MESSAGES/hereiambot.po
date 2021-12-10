@@ -98,8 +98,24 @@ msgid "You haven't received emojis, send someone a request by clicking /care!"
 msgstr "У Вас пока что нет эмоджи, отправьте кому-нибудь запрос, нажав /care!"
 
 # handlers.py line 182
-msgid "{1} received emojis!"
-msgstr "Вы получили {0} эмоджи!"
+msgid "You've received {0} {1}\n"
+      "You've received {2} {3}\n"
+      "You've received {4} {5}\n"
+      "You've received {6} {7}\n"
+msgstr "Вы получили {0} {1}\n"
+       "Вы получили {2} {3}\n"
+       "Вы получили {4} {5}\n"
+       "Вы получили {6} {7}\n"
+
+# handlers.py line 236
+msgid "You've sent {0} {1}\n"
+      "You've sent {2} {3}\n"
+      "You've sent {4} {5}\n"
+      "You've sent {6} {7}\n"
+msgstr "Вы отправили {0} {1}\n"
+       "Вы отправили {2} {3}\n"
+       "Вы отправили {4} {5}\n"
+       "Вы отправили {6} {7}\n"
 
 # handlers.py line 190
 msgid "You haven't sent emojis yet!"

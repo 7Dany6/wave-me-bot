@@ -45,14 +45,6 @@ class SQL:
         with self.connection:
             return self.cursor.execute("SELECT contact FROM `main` WHERE `id` = ?", (id,)).fetchall()
 
-
-    def delete_account(self, id):
-        """
-        Deletes a user from a database
-        """
-        with self.connection:
-            return self.cursor.execute("DELETE FROM `main` WHERE `id` = ?", (id,)).fetchall()
-
     def add_to_tracking_trackable(self, id_tracking, tracking, id_trackable, trackable, name):
         """
         Registration of a user
@@ -130,12 +122,40 @@ class SQL:
             result = self.cursor.execute("SELECT * FROM `received_emoji` WHERE `id_received` = ? AND id_sent = ?", (id_received, id_sent, )).fetchall()
         return bool(result)
 
-    def increase_received_emoji_counter(self, received_id, sent_id):
+    def increase_received_victory_emoji_counter(self, received_id, sent_id):
         """
-        Receives number of emojis by 1
+        Increases number of victory emojis by 1
         """
         with self.connection:
-            return self.cursor.execute("UPDATE `received_emoji` SET `count` = `count` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()
+            return self.cursor.execute("UPDATE `received_emoji` SET `count_victory` = `count_victory` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()
+
+    def increase_received_cold_emoji_counter(self, received_id, sent_id):
+        """
+        Increases number of cold emojis by 1
+        """
+        with self.connection:
+            return self.cursor.execute("UPDATE `received_emoji` SET `count_cold` = `count_cold` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()
+
+    def increase_received_snowflake_emoji_counter(self, received_id, sent_id):
+        """
+        Increases number of snowflake emojis by 1
+        """
+        with self.connection:
+            return self.cursor.execute("UPDATE `received_emoji` SET `count_snowflake` = `count_snowflake` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()
+
+    def increase_received_snowman_emoji_counter(self, received_id, sent_id):
+        """
+        Increases number of snowman emojis by 1
+        """
+        with self.connection:
+            return self.cursor.execute("UPDATE `received_emoji` SET `count_snowman` = `count_snowman` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()
+
+    def increase_received_fire_emoji_counter(self, received_id, sent_id):
+        """
+        Increases number of fire emojis by 1
+        """
+        with self.connection:
+            return self.cursor.execute("UPDATE `received_emoji` SET `count_fire` = `count_fire` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()
 
     def count_received_emojis(self, received_id):
         """

@@ -146,9 +146,27 @@ async def track_person(message: types.Message, state: FSMContext):
     @dp.message_handler(content_types=["text"], state="*")
     async def send_emoji(message: types.Message):
         if not database.existence_received_emoji(queries[message.from_user.id][-1], message.from_user.id):
-            database.add_to_received_emoji(queries[message.from_user.id][-1], message.from_user.id)
+            if message.text[:-1] == 'Всё идёт по плану':
+                database.add_to_received_emoji_if_victory(queries[message.from_user.id][-1], message.from_user.id)
+            elif message.text[:-1] == 'Опять метель':
+                database.add_to_received_emoji_if_snowflake(queries[message.from_user.id][-1], message.from_user.id)
+            elif message.text[:-1] == 'Зима-холода':
+                database.add_to_received_emoji_if_cold(queries[message.from_user.id][-1], message.from_user.id)
+            elif message.text[:-2] == 'С Новым годом':
+                database.add_to_received_emoji_if_snowman(queries[message.from_user.id][-1], message.from_user.id)
+            elif message.text[:-1] == 'Ты горишь как огонь':
+                database.add_to_received_emoji_if_fire(queries[message.from_user.id][-1], message.from_user.id)
         else:
-            database.increase_received_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+            if message.text[:-1] == 'Всё идёт по плану':
+                database.increase_received_victory_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+            elif message.text[:-1] == 'Опять метель':
+                database.increase_received_snowflake_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+            elif message.text[:-1] == 'Зима-холода':
+                database.increase_received_cold_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+            elif message.text[:-2] == 'С Новым годом':
+                database.increase_received_snowman_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+            elif message.text[:-1] == 'Ты горишь как огонь':
+                database.increase_received_fire_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
         if not database.user_existance(queries[message.from_user.id][-1], message.from_user.id):
             database.add_to_tracking_trackable(queries[message.from_user.id][-1], database.get_contact(queries[message.from_user.id][-1])[0][0],
                                                message.from_user.id, database.get_contact(message.from_user.id)[0][0], database.get_name(message.from_user.id)[0][0])
@@ -160,6 +178,15 @@ async def track_person(message: types.Message, state: FSMContext):
         elif message.text[:-1] == 'Опять метель':
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                    text=_("\u2744"))
+        elif message.text[:-1] == 'Зима-холода':
+            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                   text=_("\U0001F976"))
+        elif message.text[:-2] == 'С Новым годом':
+            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                   text=_("\u2603"))
+        elif message.text[:-1] == 'Ты горишь как огонь':
+            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                   text=_("\U0001F525"))
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("From user <a href='tg://user?id={1}'>{0}</a> with number {2}!").format(
                                    database.get_name(message.from_user.id)[0][0], message.from_user.id,
@@ -189,7 +216,13 @@ async def return_number_received_emojis(message: types.Message):
                                text=_("You haven't received emojis, send someone a request by clicking /care!"))
     else:
         await bot.send_message(message.from_user.id,
-                               text=_("{1} received emojis!").format(database.count_received_emojis(message.from_user.id)[0][0]))
+                               text=_("You've received {0} {1}\n"
+                                      "You've received {2} {3}\n"
+                                      "You've received {4} {5}\n"
+                                      "You've received {6} {7}\n").format(database.count_received_emojis_victory(message.from_user.id)[0][0], "\u270C",
+                                                                          database.count_received_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
+                                                                          database.count_received_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
+                                                                          database.count_received_emojis_fire(message.from_user.id)[0][0], "\U0001F525"))
 
 
 @dp.message_handler(commands="sent", state="*")
@@ -200,8 +233,13 @@ async def return_number_sent_emojis(message: types.Message):
                                text=_("You haven't sent emojis yet!"))
     else:
         await bot.send_message(message.from_user.id,
-                               text=_("{1} sent emojis!").format(
-                                   database.count_sent_emojis(message.from_user.id)[0][0]))
+                               text=_("You've sent {0} {1}\n"
+                                      "You've sent {2} {3}\n"
+                                      "You've sent {4} {5}\n"
+                                      "You've sent {6} {7}\n").format(database.count_sent_emojis_victory(message.from_user.id)[0][0], "\u270C",
+                                                                      database.count_sent_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
+                                                                      database.count_sent_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
+                                                                      database.count_sent_emojis_fire(message.from_user.id)[0][0], "\U0001F525"))
 
 
 @dp.message_handler(commands="feedback", state='*')
@@ -214,6 +252,7 @@ async def feedback(message: types.Message, state: FSMContext):
     await Form.feedback.set()
     current_state = await state.get_state()
     print(current_state)
+
 
 @dp.message_handler(content_types=['text'], state=Form.feedback)
 async def process_feedback(message: types.Message, state: FSMContext):

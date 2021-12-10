@@ -60,6 +60,17 @@ msgstr "Я в порядке"
 msgid "User [{0}](tg://user?id={1}) with number {2} waves {3} to you\.\n*Switch on your location before answer 'Here I Am'*\."
 msgstr "Пользователь [{0}](tg://user?id={1}) с номером {2} помахал {3} Вам\.\n*Включите локацию перед тем, как ответить 'Я здесь'*\."
 
+#functions.py line 27
+msgid "Freezing{0}"
+msgstr "Зима-холода{0}"
+
+#functions.py line 28
+msgid "Happy New Year{0}!"
+msgstr "С Новым годом{0}!"
+
+#functions.py line 29
+msgid "I'm on fire{0}"
+msgstr "Ты горишь как огонь{0}"
 
 # handlers.py line 140
 msgid "User [{0}](tg://user?id={1}) with number {2} is here:\n{3}"

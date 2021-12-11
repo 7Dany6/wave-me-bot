@@ -79,12 +79,13 @@ async def track_person(message: types.Message, state: FSMContext):
         await share_a_contact(message.from_user.id)
     await Form.tracking.set()
 
-    @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)  # deleted state Form.tracking
+    @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)
     async def find_person(message: types.Message, state: FSMContext):
-        if message.text[:-1] in ('Всё идёт по плану', 'Опять метель'):
+        if message.content_type == 'text' and message.text[:-1] in ('Всё идёт по плану', 'Опять метель', 'Зима-холода', 'Ты горишь как огонь'):
             print('here')
             await send_emoji(message=message)
         else:
+            print('text name')
             await request_acceptance(message.from_user.id)
             try:
                 if message.content_type == 'text':

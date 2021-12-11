@@ -216,10 +216,11 @@ async def return_number_received_emojis(message: types.Message):
                                text=_("You haven't received emojis, send someone a request by clicking /care!"))
     else:
         await bot.send_message(message.from_user.id,
-                               text=_("You've received {0} {1}\n"
-                                      "You've received {2} {3}\n"
-                                      "You've received {4} {5}\n"
-                                      "You've received {6} {7}\n").format(database.count_received_emojis_victory(message.from_user.id)[0][0], "\u270C",
+                               text=_("You've received\n"
+                                      "{0} {1}\n"
+                                      "{2} {3}\n"
+                                      "{4} {5}\n"
+                                      "{6} {7}\n").format(database.count_received_emojis_victory(message.from_user.id)[0][0], "\u270C",
                                                                           database.count_received_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
                                                                           database.count_received_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
                                                                           database.count_received_emojis_fire(message.from_user.id)[0][0], "\U0001F525"))
@@ -233,10 +234,11 @@ async def return_number_sent_emojis(message: types.Message):
                                text=_("You haven't sent emojis yet!"))
     else:
         await bot.send_message(message.from_user.id,
-                               text=_("You've sent {0} {1}\n"
-                                      "You've sent {2} {3}\n"
-                                      "You've sent {4} {5}\n"
-                                      "You've sent {6} {7}\n").format(database.count_sent_emojis_victory(message.from_user.id)[0][0], "\u270C",
+                               text=_("You've sent\n"
+                                      "{0} {1}\n"
+                                      "{2} {3}\n"
+                                      "{4} {5}\n"
+                                      "{6} {7}\n").format(database.count_sent_emojis_victory(message.from_user.id)[0][0], "\u270C",
                                                                       database.count_sent_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
                                                                       database.count_sent_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
                                                                       database.count_sent_emojis_fire(message.from_user.id)[0][0], "\U0001F525"))

@@ -216,7 +216,7 @@ async def return_number_received_emojis(message: types.Message):
                                text=_("You haven't received emojis, send someone a request by clicking /care!"))
     else:
         await bot.send_message(message.from_user.id,
-                               text=_("You've received\n"
+                               text=_("You've received: \n"
                                       "{0} {1}\n"
                                       "{2} {3}\n"
                                       "{4} {5}\n"
@@ -235,7 +235,7 @@ async def return_number_sent_emojis(message: types.Message):
                                text=_("You haven't sent emojis yet!"))
     else:
         await bot.send_message(message.from_user.id,
-                               text=_("You've sent\n"
+                               text=_("You've sent: \n"
                                       "{0} {1}\n"
                                       "{2} {3}\n"
                                       "{4} {5}\n"

@@ -239,7 +239,7 @@ async def return_number_sent_emojis(message: types.Message):
                                       "{0} {1}\n"
                                       "{2} {3}\n"
                                       "{4} {5}\n"
-                                      "{6} {7}\n")..format(database.count_sent_emojis_victory(message.from_user.id)[0][0], "\u270C",
+                                      "{6} {7}\n").format(database.count_sent_emojis_victory(message.from_user.id)[0][0], "\u270C",
                                                            database.count_sent_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
                                                            database.count_sent_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
                                                            database.count_sent_emojis_fire(message.from_user.id)[0][0], "\U0001F525"))

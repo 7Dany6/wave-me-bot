@@ -121,6 +121,7 @@ msgstr "Вы отправили\n
        "{4} {5}\n"
        "{6} {7}\n"
 
+
 # handlers.py line 190
 msgid "You haven't sent emojis yet!"
 msgstr "Вы пока не отправляли эмоджи!"

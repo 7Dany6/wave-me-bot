@@ -224,7 +224,7 @@ async def return_number_received_emojis(message: types.Message):
                                                           database.count_received_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
                                                           database.count_received_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
                                                           database.count_received_emojis_fire(message.from_user.id)[0][0], "\U0001F525"))
-=======
+
 
 
 @dp.message_handler(commands="sent", state="*")

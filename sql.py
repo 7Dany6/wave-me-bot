@@ -243,6 +243,19 @@ class SQL:
                                        "FROM `count_emojis`"
                                        "WHERE `id_received` = ?",(received_id, )).fetchall()
 
+    def count_received_emojis_snowman(self, received_id):
+        """
+        Counts number of all received snowman emojis
+        """
+        with self.connection:
+            return self.cursor.execute("WITH `count_emojis` AS"
+                                       "(SELECT SUM(`count_snowman`) as number, `id_received`"
+                                       "FROM `received_emoji`"
+                                       "GROUP BY `id_received`)"
+                                       "SELECT `number`"
+                                       "FROM `count_emojis`"
+                                       "WHERE `id_received` = ?",(received_id, )).fetchall()
+
     def count_sent_emojis_victory(self, received_id):
         """
         Counts number of received victory emojis
@@ -289,6 +302,19 @@ class SQL:
         with self.connection:
             return self.cursor.execute("WITH `count_emojis` AS"
                                        "(SELECT SUM(`count_fire`) as number, `id_sent`"
+                                       "FROM `received_emoji`"
+                                       "GROUP BY `id_sent`)"
+                                       "SELECT `number`"
+                                       "FROM `count_emojis`"
+                                       "WHERE `id_sent` = ?",(received_id, )).fetchall()
+
+    def count_sent_emojis_snowman(self, received_id):
+        """
+        Counts number of received snowman emojis
+        """
+        with self.connection:
+            return self.cursor.execute("WITH `count_emojis` AS"
+                                       "(SELECT SUM(`count_snowman`) as number, `id_sent`"
                                        "FROM `received_emoji`"
                                        "GROUP BY `id_sent`)"
                                        "SELECT `number`"

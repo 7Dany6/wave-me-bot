@@ -115,11 +115,13 @@ msgid "You've sent: \n"
       "{2} {3}\n"
       "{4} {5}\n"
       "{6} {7}\n"
+      "{8} {9}\n"
 msgstr "Вы отправили: \n"
        "{0} {1}\n"
        "{2} {3}\n"
        "{4} {5}\n"
        "{6} {7}\n"
+       "{8} {9}\n"
 
 
 # handlers.py line 190
@@ -135,12 +137,31 @@ msgid "Everything is great{0}"
 msgstr "Всё идёт по плану{0}"
 
 # functions.py line 26
-msgid "Again snowstorm{0}"
+msgid "Let it snow{0}"
 msgstr "Опять метель{0}"
+
+# functions.py line 26
+msgid "Happy New Year{0}!"
+msgstr "С Новым годом{0}!"
 
 # handlers.py line 177
 msgid "Hi!\n\nWe all have people to care about and now you can do it not disturbing them sending a request with only one button!\n\nI'm glad to help you out\n\nWith my helping hand you can get where this ot that person is or you can get an emoji with his state.\n\nPress /start and enjoy:\n\n-/care to check location/state (through clip symbol)\n\n-/feedback to leave your opinion about bot\n\n-/sent to know how many emojis you've sent\n\n-/received to know how many emojis you've received\n\nP.S. Use me via smartphone, not PC!"
 msgstr "Привет!\n\nУ всех нас есть люди, о которых мы проявляем заботу, теперь есть возможность делать это, не отвлекая близких людей, послав им запрос всего одной кнопкой!\n\nЯ готов помочь Вам, выступив посредником в ваших отношениях\n\nС моей помощью Вы можете узнать, где тот или иной человек находится или получить от него эмоджи.\n\nНажмите /start и наслаждайтесь возможностями:\n\n-/care, чтобы проверить локацию/состояние человека (через знак скрепки)\n\n-/feedback, чтобы оставить своём мнение о боте\n\n-/sent, чтобы посмотреть, сколько эмоджи Вы отправили\n\n-/received, чтобы посмотреть, сколько эмоджи Вы получили\n\nP.S. Используйте меня на смартфоне, а не на компьютере!"
 
+# handlers.py line 35
+msgid "Agree"
+msgstr "Соглашаюсь"
+
+# handlers.py line 36
+msgid "Disagree"
+msgstr "Не соглашаюсь"
+
+# handlers.py line 38
+msgid "Please, before using a bot, meet terms and conditions:\n{}"
+msgstr "Пожалуйста, перед использованием бота ознакомьтесь с пользовательскими соглашениями:\n{}"
+
+# handlers.py line 47
+msgid "Sorry, firstly you need to agree with terms and conditions!"
+msgstr "Приносим извинения, для начала работы необходимо принять пользовательские соглашения!"
 
 

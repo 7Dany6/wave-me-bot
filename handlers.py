@@ -31,8 +31,26 @@ async def intro_function(message):
     if database.user_exists(message.from_user.id):
         await register(message.from_user.id)
     else:
-        await aware_of_contact(message.from_user.id)
-        await Form.register.set()
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        button_agree = types.KeyboardButton(_("Agree"))
+        button_disagree = types.KeyboardButton(_("Disagree"))
+        keyboard.add(button_agree, button_disagree)
+        await bot.send_message(message.from_user.id, text=_("Please, before using a bot, meet terms and conditions:\n{}").format(f'https://7daneksulimov.wixsite.com/hereiam'), reply_markup=keyboard)
+
+
+@dp.message_handler(lambda message: message.text == _("Agree"), state="*")
+async def terms_conditions_agree(message: types.Message, state: FSMContext):
+    await aware_of_contact(message.from_user.id)
+    await Form.register.set()
+
+@dp.message_handler(lambda message: message.text == _("Disagree"), state="*")
+async def terms_conditions_disagree(message: types.Message, state: FSMContext):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    button_agree = types.KeyboardButton(_("Agree"))
+    button_disagree = types.KeyboardButton(_("Disagree"))
+    keyboard.add(button_agree, button_disagree)
+    await bot.send_message(message.from_user.id, text=_("Sorry, firstly you need to agree with terms and conditions!"), reply_markup=keyboard)
+
 
     @dp.message_handler(content_types=['contact'], state=Form.register)
     async def adding_to_db(message: types.Message, state: FSMContext):
@@ -221,10 +239,12 @@ async def return_number_received_emojis(message: types.Message):
                                       "{0} {1}\n"
                                       "{2} {3}\n"
                                       "{4} {5}\n"
-                                      "{6} {7}\n").format(database.count_received_emojis_victory(message.from_user.id)[0][0], "\u270C",
+                                      "{6} {7}\n"
+                                      "{8} {9}\n").format(database.count_received_emojis_victory(message.from_user.id)[0][0], "\u270C",
                                                           database.count_received_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
                                                           database.count_received_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
-                                                          database.count_received_emojis_fire(message.from_user.id)[0][0], "\U0001F525"))
+                                                          database.count_received_emojis_fire(message.from_user.id)[0][0], "\U0001F525",
+                                                          database.count_received_emojis_snowman(message.from_user.id)[0][0], "\u2603"))
 
 
 
@@ -240,10 +260,12 @@ async def return_number_sent_emojis(message: types.Message):
                                       "{0} {1}\n"
                                       "{2} {3}\n"
                                       "{4} {5}\n"
-                                      "{6} {7}\n").format(database.count_sent_emojis_victory(message.from_user.id)[0][0], "\u270C",
+                                      "{6} {7}\n"
+                                      "{8} {9}\n").format(database.count_sent_emojis_victory(message.from_user.id)[0][0], "\u270C",
                                                            database.count_sent_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
                                                            database.count_sent_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
-                                                           database.count_sent_emojis_fire(message.from_user.id)[0][0], "\U0001F525"))
+                                                           database.count_sent_emojis_fire(message.from_user.id)[0][0], "\U0001F525",
+                                                          database.count_sent_emojis_snowman(message.from_user.id)[0][0], "\u2603"))
 
 
 

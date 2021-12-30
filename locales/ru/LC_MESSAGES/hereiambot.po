@@ -103,11 +103,14 @@ msgid "You've received: \n"
       "{2} {3}\n"
       "{4} {5}\n"
       "{6} {7}\n"
+      "{8} {9}\n"
+
 msgstr "Вы получили: \n"
        "{0} {1}\n"
        "{2} {3}\n"
        "{4} {5}\n"
        "{6} {7}\n"
+       "{8} {9}\n"
 
 # handlers.py line 236
 msgid "You've sent: \n"
@@ -133,7 +136,7 @@ msgid "{1} sent emojis!"
 msgstr "Вы отправили {0} эмоджи!"
 
 # functions.py line 25
-msgid "Everything is great{0}"
+msgid "It's alright{0}"
 msgstr "Всё идёт по плану{0}"
 
 # functions.py line 26

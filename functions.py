@@ -22,7 +22,7 @@ async def register(id: int):
 def throw_buttons():
     keyboards = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     button_location = types.KeyboardButton(_("Here I Am"), request_location=True)
-    button_victory = types.KeyboardButton(_("Everything is great{0}").format("\u270C"))
+    button_victory = types.KeyboardButton(_("It's alright{0}").format("\u270C"))
     button_snowflake = types.KeyboardButton(_("Let it snow{0}").format("\u2744"))
     button_cold = types.KeyboardButton(_("Freezing{0}").format("\U0001F976"))
     button_snowman = types.KeyboardButton(_("Happy New Year{0}!").format("\u2603"))

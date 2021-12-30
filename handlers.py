@@ -99,7 +99,7 @@ async def track_person(message: types.Message, state: FSMContext):
 
     @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)
     async def find_person(message: types.Message, state: FSMContext):
-        if message.content_type == 'text' and message.text[:-1] in ('Всё идёт по плану', 'Опять метель', 'Зима-холода', 'Ты горишь как огонь'):
+        if message.content_type == 'text' and (message.text[:-1] in (_("It's alright"), _('Let it snow'), _('Freezing'), _("I'm on fire")) or message.text[:-2] == _("Happy New Year")):
             print('here')
             await send_emoji(message=message)
         else:
@@ -165,45 +165,45 @@ async def track_person(message: types.Message, state: FSMContext):
     @dp.message_handler(content_types=["text"], state="*")
     async def send_emoji(message: types.Message):
         if not database.existence_received_emoji(queries[message.from_user.id][-1], message.from_user.id):
-            if message.text[:-1] == 'Всё идёт по плану':
+            if message.text[:-1] == "It's alright":
                 database.add_to_received_emoji_if_victory(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == 'Опять метель':
+            elif message.text[:-1] == 'Let it snow':
                 database.add_to_received_emoji_if_snowflake(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == 'Зима-холода':
+            elif message.text[:-1] == 'Freezing':
                 database.add_to_received_emoji_if_cold(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-2] == 'С Новым годом':
+            elif message.text[:-2] == 'Happy New Year':
                 database.add_to_received_emoji_if_snowman(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == 'Ты горишь как огонь':
+            elif message.text[:-1] == "I'm on fire":
                 database.add_to_received_emoji_if_fire(queries[message.from_user.id][-1], message.from_user.id)
         else:
-            if message.text[:-1] == 'Всё идёт по плану':
+            if message.text[:-1] == "It's alright":
                 database.increase_received_victory_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == 'Опять метель':
+            elif message.text[:-1] == 'Let it snow':
                 database.increase_received_snowflake_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == 'Зима-холода':
+            elif message.text[:-1] == 'Freezing':
                 database.increase_received_cold_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-2] == 'С Новым годом':
+            elif message.text[:-2] == 'Happy New Year':
                 database.increase_received_snowman_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == 'Ты горишь как огонь':
+            elif message.text[:-1] == "I'm on fire":
                 database.increase_received_fire_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
         if not database.user_existance(queries[message.from_user.id][-1], message.from_user.id):
             database.add_to_tracking_trackable(queries[message.from_user.id][-1], database.get_contact(queries[message.from_user.id][-1])[0][0],
                                                message.from_user.id, database.get_contact(message.from_user.id)[0][0], database.get_name(message.from_user.id)[0][0])
         else:
             database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
-        if message.text[:-1] == 'Всё идёт по плану':
+        if message.text[:-1] == "It's alright":
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                    text=_("\u270C"))
-        elif message.text[:-1] == 'Опять метель':
+        elif message.text[:-1] == 'Let it snow':
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                    text=_("\u2744"))
-        elif message.text[:-1] == 'Зима-холода':
+        elif message.text[:-1] == 'Freezing':
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                    text=_("\U0001F976"))
-        elif message.text[:-2] == 'С Новым годом':
+        elif message.text[:-2] == 'Happy New Year':
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                    text=_("\u2603"))
-        elif message.text[:-1] == 'Ты горишь как огонь':
+        elif message.text[:-1] == "I'm on fire":
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                    text=_("\U0001F525"))
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),

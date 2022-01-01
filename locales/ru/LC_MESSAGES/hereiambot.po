@@ -167,4 +167,25 @@ msgstr "Пожалуйста, перед использованием бота �
 msgid "Sorry, firstly you need to agree with terms and conditions!"
 msgstr "Приносим извинения, для начала работы необходимо принять пользовательские соглашения!"
 
+#functions.py line 29
+msgid "I'm on fire"
+msgstr "Ты горишь как огонь"
+
+#functions.py line 29
+msgid "Happy New Year"
+msgstr "С Новым годом"
+
+#functions.py line 29
+msgid "Freezing"
+msgstr "Зима-холода"
+
+#functions.py line 29
+msgid "Let it snow"
+msgstr "Опять метель"
+
+#functions.py line 29
+msgid "It's alright"
+msgstr "Всё идёт по плану"
+
+
 

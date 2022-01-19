@@ -193,19 +193,19 @@ async def track_person(message: types.Message, state: FSMContext):
             database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
         if message.text[:-1] == _("It's alright"):
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text=_("\u270C"))
+                                   text="\u270C")
         elif message.text[:-1] == _('Let it snow'):
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text=_("\u2744"))
+                                   text="\u2744")
         elif message.text[:-1] == _('Freezing'):
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text=_("\U0001F976"))
+                                   text="\U0001F976")
         elif message.text[:-2] == _('Happy New Year'):
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text=_("\u2603"))
+                                   text="\u2603")
         elif message.text[:-1] == _("I'm on fire"):
             await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text=_("\U0001F525"))
+                                   text="\U0001F525")
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("From user <a href='tg://user?id={1}'>{0}</a> with number {2}!").format(
                                    database.get_name(message.from_user.id)[0][0], message.from_user.id,

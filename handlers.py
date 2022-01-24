@@ -144,14 +144,14 @@ async def track_person(message: types.Message, state: FSMContext):
 
     @dp.message_handler(content_types=["location"], state="*")
     async def give_position(message: types.Message, state: FSMContext):
-        polygon = Polygon([(message['location']['latitude'] - 100,
-                            message['location']['longitude'] + 100),
-                           (message['location']['latitude'] + 100,
-                            message['location']['longitude'] + 100),
-                           (message['location']['latitude'] - 100,
-                            message['location']['longitude'] - 100),
-                           (message['location']['latitude'] + 100,
-                            message['location']['longitude'] - 100)])
+        polygon = Polygon([(message['location']['latitude'] + 0.002,
+                            message['location']['longitude'] - 0.002),
+                           (message['location']['latitude'] + 0.002,
+                            message['location']['longitude'] + 0.002),
+                           (message['location']['latitude'] - 0.002,
+                            message['location']['longitude'] + 0.002),
+                           (message['location']['latitude'] - 0.002,
+                            message['location']['longitude'] - 0.002)])
         print(polygon)
         if database.existence_fav_locations(message.from_user.id):
             for value in database.coordinates(message.from_user.id):

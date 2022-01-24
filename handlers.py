@@ -1,3 +1,6 @@
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+
 import asyncio
 import logging
 import sqlite3
@@ -24,6 +27,8 @@ database = SQL(f'{DB_NAME}')
 queries = defaultdict(list)
 last_geopositions = defaultdict(list)
 people_tracking_last_geopositions = defaultdict(list)
+location_names = defaultdict(list)
+coordinates = defaultdict(dict)
 
 
 @dp.message_handler(commands="start", state="*")
@@ -134,11 +139,31 @@ async def track_person(message: types.Message, state: FSMContext):
             except IndexError:
                 await forwarding(message.from_user.id)
                 await bot.send_message(message.from_user.id, text='@here_i_ambot')
-            await state.finish()
+        await state.finish()
 
 
     @dp.message_handler(content_types=["location"], state="*")
     async def give_position(message: types.Message, state: FSMContext):
+        polygon = Polygon([(message['location']['latitude'] - 100,
+                            message['location']['longitude'] + 100),
+                           (message['location']['latitude'] + 100,
+                            message['location']['longitude'] + 100),
+                           (message['location']['latitude'] - 100,
+                            message['location']['longitude'] - 100),
+                           (message['location']['latitude'] + 100,
+                            message['location']['longitude'] - 100)])
+        print(polygon)
+        if database.existence_fav_locations(message.from_user.id):
+            for value in database.coordinates(message.from_user.id):
+                coordinates[message.from_user.id][(float(value[2]), float(value[1]))] = value[0]
+            for coords, name in coordinates[message.from_user.id].items():
+                print(coords)
+                if polygon.contains(Point(coords[0], coords[1])):
+                    await bot.send_message('{0}'.format(queries[message.from_user.id][-1]),
+                                           text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: {3}").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], name))
+                    queries[message.from_user.id].pop()
+                    await check_queries(queries, message.from_user.id)
+                    return
         result = requests.get(url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
         json_data = result.json()
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
@@ -153,12 +178,8 @@ async def track_person(message: types.Message, state: FSMContext):
         else:
             database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
         queries[message.from_user.id].pop()
-        last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")  # база с координатами, временем, contact и кто просил
-        if len(queries[message.from_user.id]) != 0:
-            await send_request(message.from_user.id,
-                               database.get_name(queries[message.from_user.id][-1])[0][0],
-                               queries[message.from_user.id][-1],
-                               database.get_contact(queries[message.from_user.id][-1])[0][0])
+        #last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")  # база с координатами, временем, contact и кто просил
+        await check_queries(queries, message.from_user.id)
 
 
     @dp.message_handler(content_types=["text"], state="*")
@@ -226,14 +247,32 @@ async def instruction(message: types.Message, state: FSMContext):
                            ))
 
 @dp.message_handler(commands='reg_place', state="*")
-async def add_location(message: types.Message, state:FSMContext):
-    await bot.send_message(message.from_user.id, text="Please, send your location!")
+async def add_location(message: types.Message):
+    await bot.send_message(message.from_user.id, text=_("Please, enter the name of a location!"))
+    await Form.enter_location.set()
+
+
+@dp.message_handler(content_types=['text'], state=Form.enter_location)
+async def name_location(message: types.Message):
+    location_names[message.from_user.id].append(message.text)
+    print(location_names)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    button = types.KeyboardButton(_("Share a location"), request_location=True)
+    keyboard.add(button)
+    await bot.send_message(message.from_user.id,
+                           text=_("Please, <b>switch on your location</b> and press the button!"),
+                           parse_mode=ParseMode.HTML,
+                           reply_markup=keyboard)
     await Form.fav_location.set()
 
-    @dp.message_handler(content_types=['location'], state=Form.fav_location)
-    async def send_fav_location(message: types.Message, state: FSMContext):
-        await bot.send_message(message.from_user.id, text="{}, {}".format(message['location']['latitude'], message['location']['longitude']))
-        await state.finish()
+
+@dp.message_handler(content_types=['location'], state=Form.fav_location)
+async def send_fav_location(message: types.Message, state: FSMContext):
+    database.add_location_name(message.from_user.id, location_names[message.from_user.id].pop(),
+                               message['location']['longitude'], message['location']['latitude'])
+    await bot.send_message(message.from_user.id, text=_("Location has been registered!"))
+    print(database.coordinates(message.from_user.id))
+    await state.finish()
 
 
 @dp.message_handler(commands="received", state="*")

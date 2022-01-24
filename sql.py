@@ -336,3 +336,10 @@ class SQL:
         with self.connection:
             result = self.cursor.execute("SELECT * FROM `received_emoji` WHERE `id_sent` = ?", (id_sent,)).fetchall()
         return bool(result)
+
+    def add_location_name(self, client_id, location_name, longitude, latitude):
+        """
+        Appending location information in `fav_locations`
+        """
+        with self.connection:
+            return self.cursor.execute("INSERT INTO `fav_locations` VALUES (?, ?, ?, ?)", (client_id, location_name, longitude, latitude))

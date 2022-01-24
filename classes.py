@@ -6,3 +6,4 @@ class Form(StatesGroup):
     register = State()
     last_geo = State()
     tracking = State()
+    fav_location = State()

@@ -38,11 +38,6 @@ async def intro_function(message):
         await bot.send_message(message.from_user.id, text=_("Please, before using a bot, meet terms and conditions:\n{}").format(f'https://7daneksulimov.wixsite.com/hereiam'), reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == _("Agree"), state="*")
-async def terms_conditions_agree(message: types.Message, state: FSMContext):
-    await aware_of_contact(message.from_user.id)
-    await Form.register.set()
-
 @dp.message_handler(lambda message: message.text == _("Disagree"), state="*")
 async def terms_conditions_disagree(message: types.Message, state: FSMContext):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
@@ -51,6 +46,10 @@ async def terms_conditions_disagree(message: types.Message, state: FSMContext):
     keyboard.add(button_agree, button_disagree)
     await bot.send_message(message.from_user.id, text=_("Sorry, firstly you need to agree with terms and conditions!"), reply_markup=keyboard)
 
+@dp.message_handler(lambda message: message.text == _("Agree"), state="*")
+async def terms_conditions_agree(message: types.Message, state: FSMContext):
+    await aware_of_contact(message.from_user.id)
+    await Form.register.set()
 
     @dp.message_handler(content_types=['contact'], state=Form.register)
     async def adding_to_db(message: types.Message, state: FSMContext):
@@ -104,7 +103,6 @@ async def track_person(message: types.Message, state: FSMContext):
             await send_emoji(message=message)
         else:
             print('text name')
-            await request_acceptance(message.from_user.id)
             try:
                 if message.content_type == 'text':
                     queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
@@ -116,6 +114,7 @@ async def track_person(message: types.Message, state: FSMContext):
                     elif "+" not in str(message.contact['phone_number']):
                         print("i'm here")
                         queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
+                await request_acceptance(message.from_user.id)
                 if message.content_type == 'contact':
                     if str(message.contact['phone_number']).startswith("+"):
                         await send_request(database.tracked_id(message.contact['phone_number'][1::])[0][0],
@@ -225,6 +224,16 @@ async def instruction(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id,
                            text=_("Hi!\n\nWe all have people to care about and now you can do it not disturbing them sending a request with only one button!\n\nI'm glad to help you out\n\nWith my helping hand you can get where this ot that person is or you can get an emoji with his state.\n\nPress /start and enjoy:\n\n-/care to check location/state (through clip symbol)\n\n-/feedback to leave your opinion about bot\n\n-/sent to know how many emojis you've sent\n\n-/received to know how many emojis you've received\n\nP.S. Use me via smartphone, not PC!"
                            ))
+
+@dp.message_handler(commands='reg_place', state="*")
+async def add_location(message: types.Message, state:FSMContext):
+    await bot.send_message(message.from_user.id, text="Please, send your location!")
+    await Form.fav_location.set()
+
+    @dp.message_handler(content_types=['location'], state=Form.fav_location)
+    async def send_fav_location(message: types.Message, state: FSMContext):
+        await bot.send_message(message.from_user.id, text="{}, {}".format(message['location']['latitude'], message['location']['longitude']))
+        await state.finish()
 
 
 @dp.message_handler(commands="received", state="*")

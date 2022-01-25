@@ -243,7 +243,7 @@ async def track_person(message: types.Message):
 @dp.message_handler(commands='instr', state="*")
 async def instruction(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id,
-                           text=_("Hi!\n\nWe all have people to care about and now you can do it not disturbing them sending a request with only one button!\n\nI'm glad to help you out\n\nWith my helping hand you can get where this ot that person is or you can get an emoji with his state.\n\nPress /start and enjoy:\n\n-/care to check location/state (through clip symbol)\n\n-/feedback to leave your opinion about bot\n\n-/sent to know how many emojis you've sent\n\n-/received to know how many emojis you've received\n\nP.S. Use me via smartphone, not PC!"
+                           text=_("Hi!\n\nWe all have people to care about and now you can do it not disturbing them sending a request with only one button!\n\nI'm glad to help you out\n\nWith my helping hand you can get where this ot that person is or you can get an emoji with his state.\n\nPress /start and enjoy:\n\n-/care to check location/state (through clip symbol)\n\n-/feedback to leave your opinion about bot\n\n-/sent to know how many emojis you've sent\n\n-/received to know how many emojis you've received\n\n-/add_place to add location to your favourite\n\nP.S. Use me via smartphone, not PC!"
                            ))
 
 @dp.message_handler(commands='add_place', state="*")

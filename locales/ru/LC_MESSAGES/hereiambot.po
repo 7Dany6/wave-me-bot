@@ -187,5 +187,24 @@ msgstr "Опять метель"
 msgid "It's alright"
 msgstr "Всё идёт по плану"
 
+#handlers.py line 231
+msgid "Please, enter the name of a location!"
+msgstr "Пожалуйста, введите название места!"
+
+#handlers.py line 240
+msgid "Please, <b>switch on your location</b> and press the button!"
+msgstr "Пожалуйста, <b>включите Вашу локацию</b> и нажмите на кнопку!"
+
+#handlers.py line 243
+msgid "Share a location"
+msgstr "Поделиться локацией"
+
+#handlers.py line 252
+msgid "Location has been registered!"
+msgstr "Локация успешно зарегистрирована!"
+
+#handlers.py line 163
+msgid "User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: {3}"
+msgstr "Пользователь <a href='tg://user?id={1}'>{0}</a> с номером {2} находится здесь: {3}"
 
 

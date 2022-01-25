@@ -1,3 +1,6 @@
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+
 import asyncio
 import logging
 import sqlite3
@@ -24,6 +27,8 @@ database = SQL(f'{DB_NAME}')
 queries = defaultdict(list)
 last_geopositions = defaultdict(list)
 people_tracking_last_geopositions = defaultdict(list)
+location_names = defaultdict(list)
+coordinates = defaultdict(dict)
 
 
 @dp.message_handler(commands="start", state="*")
@@ -38,11 +43,6 @@ async def intro_function(message):
         await bot.send_message(message.from_user.id, text=_("Please, before using a bot, meet terms and conditions:\n{}").format(f'https://7daneksulimov.wixsite.com/hereiam'), reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == _("Agree"), state="*")
-async def terms_conditions_agree(message: types.Message, state: FSMContext):
-    await aware_of_contact(message.from_user.id)
-    await Form.register.set()
-
 @dp.message_handler(lambda message: message.text == _("Disagree"), state="*")
 async def terms_conditions_disagree(message: types.Message, state: FSMContext):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
@@ -51,6 +51,10 @@ async def terms_conditions_disagree(message: types.Message, state: FSMContext):
     keyboard.add(button_agree, button_disagree)
     await bot.send_message(message.from_user.id, text=_("Sorry, firstly you need to agree with terms and conditions!"), reply_markup=keyboard)
 
+@dp.message_handler(lambda message: message.text == _("Agree"), state="*")
+async def terms_conditions_agree(message: types.Message, state: FSMContext):
+    await aware_of_contact(message.from_user.id)
+    await Form.register.set()
 
     @dp.message_handler(content_types=['contact'], state=Form.register)
     async def adding_to_db(message: types.Message, state: FSMContext):
@@ -83,7 +87,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(commands="care", state='*')
-async def track_person(message: types.Message, state: FSMContext):
+async def track_person(message: types.Message):
     if database.tracking_existance(message.from_user.id):
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         buttons_for_tracking = [database.get_first_name(contact[0])[0][0] for contact in
@@ -104,7 +108,6 @@ async def track_person(message: types.Message, state: FSMContext):
             await send_emoji(message=message)
         else:
             print('text name')
-            await request_acceptance(message.from_user.id)
             try:
                 if message.content_type == 'text':
                     queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
@@ -116,6 +119,7 @@ async def track_person(message: types.Message, state: FSMContext):
                     elif "+" not in str(message.contact['phone_number']):
                         print("i'm here")
                         queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
+                await request_acceptance(message.from_user.id)
                 if message.content_type == 'contact':
                     if str(message.contact['phone_number']).startswith("+"):
                         await send_request(database.tracked_id(message.contact['phone_number'][1::])[0][0],
@@ -135,11 +139,31 @@ async def track_person(message: types.Message, state: FSMContext):
             except IndexError:
                 await forwarding(message.from_user.id)
                 await bot.send_message(message.from_user.id, text='@here_i_ambot')
-            await state.finish()
+        await state.finish()
 
 
     @dp.message_handler(content_types=["location"], state="*")
     async def give_position(message: types.Message, state: FSMContext):
+        polygon = Polygon([(message['location']['latitude'] + 0.002,
+                            message['location']['longitude'] - 0.002),
+                           (message['location']['latitude'] + 0.002,
+                            message['location']['longitude'] + 0.002),
+                           (message['location']['latitude'] - 0.002,
+                            message['location']['longitude'] + 0.002),
+                           (message['location']['latitude'] - 0.002,
+                            message['location']['longitude'] - 0.002)])
+        print(polygon)
+        if database.existence_fav_locations(message.from_user.id):
+            for value in database.coordinates(message.from_user.id):
+                coordinates[message.from_user.id][(float(value[2]), float(value[1]))] = value[0]
+            for coords, name in coordinates[message.from_user.id].items():
+                print(coords)
+                if polygon.contains(Point(coords[0], coords[1])):
+                    await bot.send_message('{0}'.format(queries[message.from_user.id][-1]),
+                                           text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: {3}").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], name))
+                    queries[message.from_user.id].pop()
+                    await check_queries(queries, message.from_user.id)
+                    return
         result = requests.get(url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
         json_data = result.json()
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
@@ -154,12 +178,8 @@ async def track_person(message: types.Message, state: FSMContext):
         else:
             database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
         queries[message.from_user.id].pop()
-        last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")  # база с координатами, временем, contact и кто просил
-        if len(queries[message.from_user.id]) != 0:
-            await send_request(message.from_user.id,
-                               database.get_name(queries[message.from_user.id][-1])[0][0],
-                               queries[message.from_user.id][-1],
-                               database.get_contact(queries[message.from_user.id][-1])[0][0])
+        #last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")  # база с координатами, временем, contact и кто просил
+        await check_queries(queries, message.from_user.id)
 
 
     @dp.message_handler(content_types=["text"], state="*")
@@ -223,8 +243,36 @@ async def track_person(message: types.Message, state: FSMContext):
 @dp.message_handler(commands='instr', state="*")
 async def instruction(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id,
-                           text=_("Hi!\n\nWe all have people to care about and now you can do it not disturbing them sending a request with only one button!\n\nI'm glad to help you out\n\nWith my helping hand you can get where this ot that person is or you can get an emoji with his state.\n\nPress /start and enjoy:\n\n-/care to check location/state (through clip symbol)\n\n-/feedback to leave your opinion about bot\n\n-/sent to know how many emojis you've sent\n\n-/received to know how many emojis you've received\n\nP.S. Use me via smartphone, not PC!"
+                           text=_("Hi!\n\nWe all have people to care about and now you can do it not disturbing them sending a request with only one button!\n\nI'm glad to help you out\n\nWith my helping hand you can get where this ot that person is or you can get an emoji with his state.\n\nPress /start and enjoy:\n\n-/care to check location/state (through clip symbol)\n\n-/feedback to leave your opinion about bot\n\n-/sent to know how many emojis you've sent\n\n-/received to know how many emojis you've received\n\n-/add_place to add location to your favourite\n\nP.S. Use me via smartphone, not PC!"
                            ))
+
+@dp.message_handler(commands='add_place', state="*")
+async def add_location(message: types.Message):
+    await bot.send_message(message.from_user.id, text=_("Please, enter the name of a location!"))
+    await Form.enter_location.set()
+
+
+@dp.message_handler(content_types=['text'], state=Form.enter_location)
+async def name_location(message: types.Message):
+    location_names[message.from_user.id].append(message.text)
+    print(location_names)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    button = types.KeyboardButton(_("Share a location"), request_location=True)
+    keyboard.add(button)
+    await bot.send_message(message.from_user.id,
+                           text=_("Please, <b>switch on your location</b> and press the button!"),
+                           parse_mode=ParseMode.HTML,
+                           reply_markup=keyboard)
+    await Form.fav_location.set()
+
+
+@dp.message_handler(content_types=['location'], state=Form.fav_location)
+async def send_fav_location(message: types.Message, state: FSMContext):
+    database.add_location_name(message.from_user.id, location_names[message.from_user.id].pop(),
+                               message['location']['longitude'], message['location']['latitude'])
+    await bot.send_message(message.from_user.id, text=_("Location has been registered!"))
+    print(database.coordinates(message.from_user.id))
+    await state.finish()
 
 
 @dp.message_handler(commands="received", state="*")

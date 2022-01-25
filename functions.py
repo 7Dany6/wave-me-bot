@@ -79,3 +79,10 @@ async def send_request_live(ids: int, first_name: str, message_id:int, contact):
                            text=_("User [{0}](tg://user?id={1}) with number {2} wants to track your *live* location\.\n*Switch on your location before answer 'Location'*\.").format(first_name, message_id, contact),
                            reply_markup=throw_buttons(),
                            parse_mode=ParseMode.MARKDOWN_V2)
+
+async def check_queries(query: list, id: int):
+    if len(query[id]) != 0:
+        await send_request(id,
+                           database.get_name(query[id][-1])[0][0],
+                           query[id][-1],
+                           database.get_contact(query[id][-1])[0][0])

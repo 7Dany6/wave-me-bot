@@ -336,3 +336,28 @@ class SQL:
         with self.connection:
             result = self.cursor.execute("SELECT * FROM `received_emoji` WHERE `id_sent` = ?", (id_sent,)).fetchall()
         return bool(result)
+
+    def add_location_name(self, client_id, location_name, longitude, latitude):
+        """
+        Appending location information in `fav_locations`
+        """
+        with self.connection:
+            return self.cursor.execute("INSERT INTO `fav_locations` VALUES (?, ?, ?, ?)", (client_id, location_name, longitude, latitude))
+
+    def existence_fav_locations(self, client_id):
+        """
+        Checking an existence in table `fav_locations`
+        """
+        with self.connection:
+            result = self.cursor.execute("SELECT * FROM `fav_locations` WHERE `id` = ?", (client_id, )).fetchall()
+            return bool(result)
+
+    def coordinates(self, client_id):
+        """
+        Retrieving coordinates of a person's locations
+        """
+        with self.connection:
+            with self.connection:
+                return self.cursor.execute("SELECT `location_name`, `longitude`, `latitude`"
+                                           "FROM `fav_locations`"
+                                           "WHERE `id` = ?", (client_id, )).fetchall()

@@ -87,7 +87,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(commands="care", state='*')
-async def track_person(message: types.Message, state: FSMContext):
+async def track_person(message: types.Message):
     if database.tracking_existance(message.from_user.id):
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         buttons_for_tracking = [database.get_first_name(contact[0])[0][0] for contact in
@@ -246,7 +246,7 @@ async def instruction(message: types.Message, state: FSMContext):
                            text=_("Hi!\n\nWe all have people to care about and now you can do it not disturbing them sending a request with only one button!\n\nI'm glad to help you out\n\nWith my helping hand you can get where this ot that person is or you can get an emoji with his state.\n\nPress /start and enjoy:\n\n-/care to check location/state (through clip symbol)\n\n-/feedback to leave your opinion about bot\n\n-/sent to know how many emojis you've sent\n\n-/received to know how many emojis you've received\n\nP.S. Use me via smartphone, not PC!"
                            ))
 
-@dp.message_handler(commands='reg_place', state="*")
+@dp.message_handler(commands='add_place', state="*")
 async def add_location(message: types.Message):
     await bot.send_message(message.from_user.id, text=_("Please, enter the name of a location!"))
     await Form.enter_location.set()

@@ -89,7 +89,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(commands="care", state='*')
-async def track_person(message: types.Message):
+async def track_person(message: types.Message, state: FSMContext):
     if database.tracking_existance(message.from_user.id):
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         buttons_for_tracking = [database.get_first_name(contact[0])[0][0] for contact in
@@ -141,11 +141,12 @@ async def track_person(message: types.Message):
             except IndexError:
                 await forwarding(message.from_user.id)
                 await bot.send_message(message.from_user.id, text='@here_i_ambot')
-        await Form.send_geo.state()
+        await state.finish()
 
 
-    @dp.message_handler(content_types=["location"], state=Form.send_geo)
+    @dp.message_handler(content_types=["location"], state="*")
     async def give_position(message: types.Message, state: FSMContext):
+        print('here')
         polygon = Polygon([(message['location']['latitude'] + 0.002,
                             message['location']['longitude'] - 0.002),
                            (message['location']['latitude'] + 0.002,
@@ -185,7 +186,6 @@ async def track_person(message: types.Message):
         queries[message.from_user.id].pop()
         #last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")  # база с координатами, временем, contact и кто просил
         await check_queries(queries, message.from_user.id)
-        await state.finish()
 
 
     @dp.message_handler(content_types=["text"], state="*")
@@ -279,6 +279,7 @@ async def send_fav_location(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id, text=_("Location has been registered!"))
     print(database.coordinates(message.from_user.id))
     await state.finish()
+
 
 
 @dp.message_handler(commands="received", state="*")

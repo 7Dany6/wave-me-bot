@@ -134,144 +134,145 @@ async def track_person(message: types.Message, state: FSMContext):
         await share_a_contact(message.from_user.id)
     await Form.tracking.set()
 
-    @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)
-    async def find_person(message: types.Message, state: FSMContext):
-        if message.content_type == 'text' and (message.text[:-1] in (_("It's alright"), _('Let it snow'), _('Freezing'), _("I'm on fire")) or message.text[:-2] == _("Happy New Year")):
-            print('here')
-            await send_emoji(message=message)
-        else:
-            print('text name')
-            try:
-                if message.content_type == 'text':
-                    queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
-                else:
-                    if str(message.contact['phone_number']).startswith("+"):
-                        print("here i am")
-                        queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
-                        print(queries)
-                    elif "+" not in str(message.contact['phone_number']):
-                        print("i'm here")
-                        queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
-                await request_acceptance(message.from_user.id)
-                if message.content_type == 'contact':
-                    if str(message.contact['phone_number']).startswith("+"):
-                        await send_request(database.tracked_id(message.contact['phone_number'][1::])[0][0],
-                                           message.from_user.first_name,
-                                           message.from_user.id,
-                                           database.get_contact(message.from_user.id)[0][0])
-                    elif "+" not in str(message.contact['phone_number']):
-                        await send_request(database.tracked_id(message.contact['phone_number'])[0][0],
-                                           message.from_user.first_name,
-                                           message.from_user.id,
-                                           database.get_contact(message.from_user.id)[0][0])
-                else:
-                    await send_request(database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
+@dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)
+async def find_person(message: types.Message, state: FSMContext):
+    if message.content_type == 'text' and (message.text[:-1] in (_("It's alright"), _('Let it snow'), _('Freezing'), _("I'm on fire")) or message.text[:-2] == _("Happy New Year")):
+        print('here')
+        await send_emoji(message=message)
+    else:
+        print('text name')
+        try:
+            if message.content_type == 'text':
+                queries[database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0]].append(message.from_user.id)
+            else:
+                if str(message.contact['phone_number']).startswith("+"):
+                    print("here i am")
+                    queries[database.tracked_id(message.contact['phone_number'][1::])[0][0]].append(message.from_user.id)
+                    print(queries)
+                elif "+" not in str(message.contact['phone_number']):
+                    print("i'm here")
+                    queries[database.tracked_id(message.contact['phone_number'])[0][0]].append(message.from_user.id)
+            await request_acceptance(message.from_user.id)
+            if message.content_type == 'contact':
+                if str(message.contact['phone_number']).startswith("+"):
+                    await send_request(database.tracked_id(message.contact['phone_number'][1::])[0][0],
                                        message.from_user.first_name,
                                        message.from_user.id,
                                        database.get_contact(message.from_user.id)[0][0])
-            except IndexError:
-                await forwarding(message.from_user.id)
-                await bot.send_message(message.from_user.id, text='@here_i_ambot')
-        await state.finish()
+                elif "+" not in str(message.contact['phone_number']):
+                    await send_request(database.tracked_id(message.contact['phone_number'])[0][0],
+                                       message.from_user.first_name,
+                                       message.from_user.id,
+                                       database.get_contact(message.from_user.id)[0][0])
+            else:
+                await send_request(database.tracked_id(database.get_contact_check(message.from_user.id, message.text)[0][0])[0][0],
+                                   message.from_user.first_name,
+                                   message.from_user.id,
+                                   database.get_contact(message.from_user.id)[0][0])
+        except IndexError:
+            await forwarding(message.from_user.id)
+            await bot.send_message(message.from_user.id, text='@here_i_ambot')
+    await Form.send_geo.set()
 
 
-    @dp.message_handler(content_types=["location"], state="*")
-    async def give_position(message: types.Message):
-        print('here')
-        polygon = Polygon([(message['location']['latitude'] + 0.002,
-                            message['location']['longitude'] - 0.002),
-                           (message['location']['latitude'] + 0.002,
-                            message['location']['longitude'] + 0.002),
-                           (message['location']['latitude'] - 0.002,
-                            message['location']['longitude'] + 0.002),
-                           (message['location']['latitude'] - 0.002,
-                            message['location']['longitude'] - 0.002)])
-        print(polygon)
-        result = requests.get(
-            url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
-        json_data = result.json()
-        if database.existence_fav_locations(message.from_user.id):
-            for value in database.coordinates(message.from_user.id):
-                coordinates[message.from_user.id][(float(value[2]), float(value[1]))] = value[0]
-            for coords, name in coordinates[message.from_user.id].items():
-                print(coords)
-                if polygon.contains(Point(coords[0], coords[1])):
-                    await bot.send_message('{0}'.format(queries[message.from_user.id][-1]),
-                                           text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: <a href='http://www.google.com/maps/place/{4},{5}'>{3}</a>").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], name, message["location"]["latitude"], message["location"]["longitude"]))
-                    queries[message.from_user.id].pop()
-                    await check_queries(queries, message.from_user.id)
-                    return
+@dp.message_handler(content_types=["location"], state=Form.send_geo)
+async def give_position(message: types.Message, state: FSMContext):
+    print('here')
+    polygon = Polygon([(message['location']['latitude'] + 0.002,
+                       message['location']['longitude'] - 0.002),
+                       (message['location']['latitude'] + 0.002,
+                        message['location']['longitude'] + 0.002),
+                       (message['location']['latitude'] - 0.002,
+                        message['location']['longitude'] + 0.002),
+                       (message['location']['latitude'] - 0.002,
+                        message['location']['longitude'] - 0.002)])
+    print(polygon)
+    result = requests.get(
+        url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
+    json_data = result.json()
+    if database.existence_fav_locations(message.from_user.id):
+        for value in database.coordinates(message.from_user.id):
+            coordinates[message.from_user.id][(float(value[2]), float(value[1]))] = value[0]
+        for coords, name in coordinates[message.from_user.id].items():
+            print(coords)
+            if polygon.contains(Point(coords[0], coords[1])):
+                await bot.send_message('{0}'.format(queries[message.from_user.id][-1]),
+                                       text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: <a href='http://www.google.com/maps/place/{4},{5}'>{3}</a>").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], name, message["location"]["latitude"], message["location"]["longitude"]))
+                queries[message.from_user.id].pop()
+                await check_queries(queries, message.from_user.id)
+                return
         #result = requests.get(url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
         #json_data = result.json()
-        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                               text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here:\n{3}").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']),
-                               parse_mode=ParseMode.HTML)  # changed parse mode
-        await bot.send_location(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                latitude=message['location']['latitude'],
-                                longitude=message['location']['longitude'])
-        if not database.user_existance(queries[message.from_user.id][-1], message.from_user.id):
-            database.add_to_tracking_trackable(queries[message.from_user.id][-1], database.get_contact(queries[message.from_user.id][-1])[0][0],
-                                               message.from_user.id, database.get_contact(message.from_user.id)[0][0], database.get_name(message.from_user.id)[0][0])
-        else:
-            database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
-        queries[message.from_user.id].pop()
+    await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                           text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here:\n{3}").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']),
+                           parse_mode=ParseMode.HTML)  # changed parse mode
+    await bot.send_location(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                            latitude=message['location']['latitude'],
+                            longitude=message['location']['longitude'])
+    if not database.user_existance(queries[message.from_user.id][-1], message.from_user.id):
+        database.add_to_tracking_trackable(queries[message.from_user.id][-1], database.get_contact(queries[message.from_user.id][-1])[0][0],
+                                           message.from_user.id, database.get_contact(message.from_user.id)[0][0], database.get_name(message.from_user.id)[0][0])
+    else:
+        database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
+    queries[message.from_user.id].pop()
         #last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")  # база с координатами, временем, contact и кто просил
-        await check_queries(queries, message.from_user.id)
+    await check_queries(queries, message.from_user.id)
+    await state.finish()
 
 
-    @dp.message_handler(content_types=["text"], state="*")
-    async def send_emoji(message: types.Message):
-        if not database.existence_received_emoji(queries[message.from_user.id][-1], message.from_user.id):
-            if message.text[:-1] == _("It's alright"):
-                database.add_to_received_emoji_if_victory(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == _('Let it snow'):
-                database.add_to_received_emoji_if_snowflake(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == _('Freezing'):
-                database.add_to_received_emoji_if_cold(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-2] == _('Happy New Year'):
-                database.add_to_received_emoji_if_snowman(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == _("I'm on fire"):
-                database.add_to_received_emoji_if_fire(queries[message.from_user.id][-1], message.from_user.id)
-        else:
-            if message.text[:-1] == _("It's alright"):
-                database.increase_received_victory_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == _('Let it snow'):
-                database.increase_received_snowflake_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == _('Freezing'):
-                database.increase_received_cold_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-2] == _('Happy New Year'):
-                database.increase_received_snowman_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-            elif message.text[:-1] == _("I'm on fire"):
-                database.increase_received_fire_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-        if not database.user_existance(queries[message.from_user.id][-1], message.from_user.id):
-            database.add_to_tracking_trackable(queries[message.from_user.id][-1], database.get_contact(queries[message.from_user.id][-1])[0][0],
-                                               message.from_user.id, database.get_contact(message.from_user.id)[0][0], database.get_name(message.from_user.id)[0][0])
-        else:
-            database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
+@dp.message_handler(content_types=["text"], state="*")
+async def send_emoji(message: types.Message):
+    if not database.existence_received_emoji(queries[message.from_user.id][-1], message.from_user.id):
         if message.text[:-1] == _("It's alright"):
-            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text="\u270C")
+                database.add_to_received_emoji_if_victory(queries[message.from_user.id][-1], message.from_user.id)
         elif message.text[:-1] == _('Let it snow'):
-            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text="\u2744")
+                database.add_to_received_emoji_if_snowflake(queries[message.from_user.id][-1], message.from_user.id)
         elif message.text[:-1] == _('Freezing'):
-            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text="\U0001F976")
+                database.add_to_received_emoji_if_cold(queries[message.from_user.id][-1], message.from_user.id)
         elif message.text[:-2] == _('Happy New Year'):
-            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text="\u2603")
+                database.add_to_received_emoji_if_snowman(queries[message.from_user.id][-1], message.from_user.id)
         elif message.text[:-1] == _("I'm on fire"):
-            await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text="\U0001F525")
+                database.add_to_received_emoji_if_fire(queries[message.from_user.id][-1], message.from_user.id)
+    else:
+        if message.text[:-1] == _("It's alright"):
+            database.increase_received_victory_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+        elif message.text[:-1] == _('Let it snow'):
+            database.increase_received_snowflake_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+        elif message.text[:-1] == _('Freezing'):
+            database.increase_received_cold_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+        elif message.text[:-2] == _('Happy New Year'):
+            database.increase_received_snowman_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+        elif message.text[:-1] == _("I'm on fire"):
+            database.increase_received_fire_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+    if not database.user_existance(queries[message.from_user.id][-1], message.from_user.id):
+        database.add_to_tracking_trackable(queries[message.from_user.id][-1], database.get_contact(queries[message.from_user.id][-1])[0][0],
+                                               message.from_user.id, database.get_contact(message.from_user.id)[0][0], database.get_name(message.from_user.id)[0][0])
+    else:
+        database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
+    if message.text[:-1] == _("It's alright"):
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                text="\u270C")
+    elif message.text[:-1] == _('Let it snow'):
+        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                text="\u2744")
+    elif message.text[:-1] == _('Freezing'):
+        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                   text="\U0001F976")
+    elif message.text[:-2] == _('Happy New Year'):
+        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                   text="\u2603")
+    elif message.text[:-1] == _("I'm on fire"):
+        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                                   text="\U0001F525")
+    await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("From user <a href='tg://user?id={1}'>{0}</a> with number {2}!").format(
                                    database.get_name(message.from_user.id)[0][0], message.from_user.id,
                                    database.get_contact(message.from_user.id)[0][0])
                                , parse_mode=ParseMode.HTML)
-        print('text below emoji')
-        queries[message.from_user.id].pop()
-        if len(queries[message.from_user.id]) != 0:
-            await send_request(message.from_user.id,
+    print('text below emoji')
+    queries[message.from_user.id].pop()
+    if len(queries[message.from_user.id]) != 0:
+        await send_request(message.from_user.id,
                                database.get_name(queries[message.from_user.id][-1])[0][0],
                                queries[message.from_user.id][-1],
                                database.get_contact(queries[message.from_user.id][-1])[0][0])

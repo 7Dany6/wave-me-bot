@@ -207,4 +207,8 @@ msgstr "Локация успешно зарегистрирована!"
 msgid "User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: {3}"
 msgstr "Пользователь <a href='tg://user?id={1}'>{0}</a> с номером {2} находится здесь: {3}"
 
+#handlers.py line 167
+msgid "User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: <a href='http://www.google.com/maps/place/{4},{5}'>{3}</a>"
+msgstr "Пользователь <a href='tg://user?id={1}'>{0}</a> с номером {2} находится здесь: <a href='http://www.google.com/maps/place/{4},{5}'>{3}</a>"
+
 

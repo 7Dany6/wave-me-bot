@@ -4,6 +4,7 @@ from shapely.geometry.polygon import Polygon
 import asyncio
 import logging
 import sqlite3
+import numpy
 
 import requests
 from collections import defaultdict
@@ -153,6 +154,9 @@ async def track_person(message: types.Message):
                            (message['location']['latitude'] - 0.002,
                             message['location']['longitude'] - 0.002)])
         print(polygon)
+        result = requests.get(
+            url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
+        json_data = result.json()
         if database.existence_fav_locations(message.from_user.id):
             for value in database.coordinates(message.from_user.id):
                 coordinates[message.from_user.id][(float(value[2]), float(value[1]))] = value[0]
@@ -160,12 +164,12 @@ async def track_person(message: types.Message):
                 print(coords)
                 if polygon.contains(Point(coords[0], coords[1])):
                     await bot.send_message('{0}'.format(queries[message.from_user.id][-1]),
-                                           text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: {3}").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], name))
+                                           text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: <a href='https://geocode-maps.yandex.ru/1.x/?apikey={4}&geocode={5},{6}&format=json&lang=ru_RU'>{3}</a>").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], name, API_KEY, message['location']['longitude'], message['location']['latitude']))
                     queries[message.from_user.id].pop()
                     await check_queries(queries, message.from_user.id)
                     return
-        result = requests.get(url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
-        json_data = result.json()
+        #result = requests.get(url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
+        #json_data = result.json()
         await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here:\n{3}").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']),
                                parse_mode=ParseMode.HTML)  # changed parse mode
@@ -254,7 +258,7 @@ async def add_location(message: types.Message):
 
 @dp.message_handler(content_types=['text'], state=Form.enter_location)
 async def name_location(message: types.Message):
-    location_names[message.from_user.id].append(message.text)
+    location_names[message.from_user.id].append(message.text.encode('utf-8'))
     print(location_names)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     button = types.KeyboardButton(_("Share a location"), request_location=True)
@@ -268,7 +272,7 @@ async def name_location(message: types.Message):
 
 @dp.message_handler(content_types=['location'], state=Form.fav_location)
 async def send_fav_location(message: types.Message, state: FSMContext):
-    database.add_location_name(message.from_user.id, location_names[message.from_user.id].pop(),
+    database.add_location_name(message.from_user.id, location_names[message.from_user.id].pop().decode('utf-8'),
                                message['location']['longitude'], message['location']['latitude'])
     await bot.send_message(message.from_user.id, text=_("Location has been registered!"))
     print(database.coordinates(message.from_user.id))

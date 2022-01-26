@@ -8,3 +8,4 @@ class Form(StatesGroup):
     tracking = State()
     enter_location = State()
     fav_location = State()
+    send_geo = State()

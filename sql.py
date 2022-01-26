@@ -14,7 +14,7 @@ class SQL:
         Searching a given person in the database
         """
         with self.connection:
-            result = self.cursor.execute("SELECT * FROM `main` WHERE `id` = ?", (id,)).fetchall()
+            result = self.cursor.execute("SELECT * FROM `users` WHERE `id` = ?", (id,)).fetchall()
         return bool(len(result))
 
     def register(self, name, id, contact):  # maybe exclude username
@@ -22,28 +22,28 @@ class SQL:
         Registration of a user
         """
         with self.connection:
-            return self.cursor.execute("INSERT INTO `main` VALUES (?, ?, ?)", (name, id, contact))
+            return self.cursor.execute("INSERT INTO `users` VALUES (?, ?, ?)", (name, id, contact))
 
     def tracked_id(self, contact):
         """
         Find id of a tracked person
         """
         with self.connection:
-            return self.cursor.execute("SELECT id FROM `main` WHERE `contact` = ?", (contact,)).fetchall()
+            return self.cursor.execute("SELECT id FROM `users` WHERE `contact` = ?", (contact,)).fetchall()
 
     def get_name(self, id):
         """
         Finds name of a person by his id
         """
         with self.connection:
-            return self.cursor.execute("SELECT name FROM `main` WHERE `id` = ?", (id,)).fetchall()
+            return self.cursor.execute("SELECT name FROM `users` WHERE `id` = ?", (id,)).fetchall()
 
     def get_contact(self, id):
         """
         Finds contact of a person by his id
         """
         with self.connection:
-            return self.cursor.execute("SELECT contact FROM `main` WHERE `id` = ?", (id,)).fetchall()
+            return self.cursor.execute("SELECT contact FROM `users` WHERE `id` = ?", (id,)).fetchall()
 
     def add_to_tracking_trackable(self, id_tracking, tracking, id_trackable, trackable, name):
         """
@@ -57,7 +57,7 @@ class SQL:
          Finds a name by a phone_number
         """
         with self.connection:
-            return self.cursor.execute("SELECT `name` FROM `main` WHERE `contact` = ?", (phone_number,)).fetchall()
+            return self.cursor.execute("SELECT `name` FROM `users` WHERE `contact` = ?", (phone_number,)).fetchall()
 
     def increase_counter(self, tracking_number, trackable_number):
         """

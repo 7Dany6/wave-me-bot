@@ -110,7 +110,7 @@ async def name_location(message: types.Message):
 @dp.message_handler(content_types=['location'], state=Form.fav_location)
 async def send_fav_location(message: types.Message, state: FSMContext):
     if not location_names[message.from_user.id]:
-        await give_position(message=message)
+        await give_position(message=message, state="*")
         print('relocate')
     database.add_location_name(message.from_user.id, location_names[message.from_user.id].pop().decode('utf-8'),
                                message['location']['longitude'], message['location']['latitude'])

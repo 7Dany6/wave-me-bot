@@ -23,6 +23,7 @@ from classes import Form
 from sql import SQL
 from functions import *
 
+
 database = SQL(f'{DB_NAME}')
 
 queries = defaultdict(list)

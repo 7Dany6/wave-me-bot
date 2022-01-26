@@ -87,6 +87,37 @@ async def cancel_handler(message: types.Message, state: FSMContext):
     logging.info('Cancelling state {}'.format(current_state))
     await cancel(message.from_user.id)
 
+@dp.message_handler(commands='add_place', state="*")
+async def add_location(message: types.Message):
+    await bot.send_message(message.from_user.id, text=_("Please, enter the name of a location!"))
+    await Form.enter_location.set()
+
+
+@dp.message_handler(content_types=['text'], state=Form.enter_location)
+async def name_location(message: types.Message):
+    location_names[message.from_user.id].append(message.text.encode('utf-8'))
+    print(location_names)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    button = types.KeyboardButton(_("Share a location"), request_location=True)
+    keyboard.add(button)
+    await bot.send_message(message.from_user.id,
+                           text=_("Please, <b>switch on your location</b> and press the button!"),
+                           parse_mode=ParseMode.HTML,
+                           reply_markup=keyboard)
+    await Form.fav_location.set()
+
+
+@dp.message_handler(content_types=['location'], state=Form.fav_location)
+async def send_fav_location(message: types.Message, state: FSMContext):
+    if not location_names[message.from_user.id]:
+        await give_position(message=message)
+        print('relocate')
+    database.add_location_name(message.from_user.id, location_names[message.from_user.id].pop().decode('utf-8'),
+                               message['location']['longitude'], message['location']['latitude'])
+    await bot.send_message(message.from_user.id, text=_("Location has been registered!"))
+    print(database.coordinates(message.from_user.id))
+    await state.finish()
+
 
 @dp.message_handler(commands="care", state='*')
 async def track_person(message: types.Message, state: FSMContext):
@@ -145,7 +176,7 @@ async def track_person(message: types.Message, state: FSMContext):
 
 
     @dp.message_handler(content_types=["location"], state="*")
-    async def give_position(message: types.Message, state: FSMContext):
+    async def give_position(message: types.Message):
         print('here')
         polygon = Polygon([(message['location']['latitude'] + 0.002,
                             message['location']['longitude'] - 0.002),
@@ -251,37 +282,6 @@ async def instruction(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id,
                            text=_("Hi!\n\nWe all have people to care about and now you can do it not disturbing them sending a request with only one button!\n\nI'm glad to help you out\n\nWith my helping hand you can get where this ot that person is or you can get an emoji with his state.\n\nPress /start and enjoy:\n\n-/care to check location/state (through clip symbol)\n\n-/feedback to leave your opinion about bot\n\n-/sent to know how many emojis you've sent\n\n-/received to know how many emojis you've received\n\n-/add_place to add location to your favourite\n\nP.S. Use me via smartphone, not PC!"
                            ))
-
-@dp.message_handler(commands='add_place', state="*")
-async def add_location(message: types.Message):
-    await bot.send_message(message.from_user.id, text=_("Please, enter the name of a location!"))
-    await Form.enter_location.set()
-
-
-@dp.message_handler(content_types=['text'], state=Form.enter_location)
-async def name_location(message: types.Message):
-    location_names[message.from_user.id].append(message.text.encode('utf-8'))
-    print(location_names)
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    button = types.KeyboardButton(_("Share a location"), request_location=True)
-    keyboard.add(button)
-    await bot.send_message(message.from_user.id,
-                           text=_("Please, <b>switch on your location</b> and press the button!"),
-                           parse_mode=ParseMode.HTML,
-                           reply_markup=keyboard)
-    await Form.fav_location.set()
-
-
-@dp.message_handler(content_types=['location'], state=Form.fav_location)
-async def send_fav_location(message: types.Message, state: FSMContext):
-    if not location_names[message.from_user.id]:
-        await give_position(message=message)
-    database.add_location_name(message.from_user.id, location_names[message.from_user.id].pop().decode('utf-8'),
-                               message['location']['longitude'], message['location']['latitude'])
-    await bot.send_message(message.from_user.id, text=_("Location has been registered!"))
-    print(database.coordinates(message.from_user.id))
-    await state.finish()
-
 
 
 @dp.message_handler(commands="received", state="*")

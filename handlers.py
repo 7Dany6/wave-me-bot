@@ -274,6 +274,8 @@ async def name_location(message: types.Message):
 
 @dp.message_handler(content_types=['location'], state=Form.fav_location)
 async def send_fav_location(message: types.Message, state: FSMContext):
+    if not location_names[message.from_user.id]:
+        await give_position(message=message)
     database.add_location_name(message.from_user.id, location_names[message.from_user.id].pop().decode('utf-8'),
                                message['location']['longitude'], message['location']['latitude'])
     await bot.send_message(message.from_user.id, text=_("Location has been registered!"))

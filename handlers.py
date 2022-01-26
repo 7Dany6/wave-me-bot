@@ -141,10 +141,10 @@ async def track_person(message: types.Message):
             except IndexError:
                 await forwarding(message.from_user.id)
                 await bot.send_message(message.from_user.id, text='@here_i_ambot')
-        await state.finish()
+        await Form.send_geo.state()
 
 
-    @dp.message_handler(content_types=["location"], state="*")
+    @dp.message_handler(content_types=["location"], state=Form.send_geo)
     async def give_position(message: types.Message, state: FSMContext):
         polygon = Polygon([(message['location']['latitude'] + 0.002,
                             message['location']['longitude'] - 0.002),
@@ -185,6 +185,7 @@ async def track_person(message: types.Message):
         queries[message.from_user.id].pop()
         #last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")  # база с координатами, временем, contact и кто просил
         await check_queries(queries, message.from_user.id)
+        await state.finish()
 
 
     @dp.message_handler(content_types=["text"], state="*")

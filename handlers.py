@@ -258,7 +258,7 @@ async def add_location(message: types.Message):
 
 @dp.message_handler(content_types=['text'], state=Form.enter_location)
 async def name_location(message: types.Message):
-    location_names[message.from_user.id].append(message.text)
+    location_names[message.from_user.id].append(message.text.encode('utf-8'))
     print(location_names)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     button = types.KeyboardButton(_("Share a location"), request_location=True)
@@ -272,7 +272,7 @@ async def name_location(message: types.Message):
 
 @dp.message_handler(content_types=['location'], state=Form.fav_location)
 async def send_fav_location(message: types.Message, state: FSMContext):
-    database.add_location_name(message.from_user.id, location_names[message.from_user.id].pop(),
+    database.add_location_name(message.from_user.id, location_names[message.from_user.id].pop().decode('utf-8'),
                                message['location']['longitude'], message['location']['latitude'])
     await bot.send_message(message.from_user.id, text=_("Location has been registered!"))
     print(database.coordinates(message.from_user.id))

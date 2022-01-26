@@ -164,7 +164,7 @@ async def track_person(message: types.Message):
                 print(coords)
                 if polygon.contains(Point(coords[0], coords[1])):
                     await bot.send_message('{0}'.format(queries[message.from_user.id][-1]),
-                                           text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: <a href='https://geocode-maps.yandex.ru/1.x/?apikey={4}&geocode={5},{6}&format=json&lang=ru_RU'>{3}</a>").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], name, API_KEY, message['location']['longitude'], message['location']['latitude']))
+                                           text=_("User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: <a href='http://www.google.com/maps/place/{4},{5}'>{3}</a>").format(message.from_user.first_name, message.from_user.id, database.get_contact(message.from_user.id)[0][0], name, message["location"]["latitude"], message["location"]["longitude"]))
                     queries[message.from_user.id].pop()
                     await check_queries(queries, message.from_user.id)
                     return

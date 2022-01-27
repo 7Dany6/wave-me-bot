@@ -5,6 +5,7 @@ import asyncio
 import logging
 import sqlite3
 import numpy
+import aiohttp
 
 import requests
 from collections import defaultdict

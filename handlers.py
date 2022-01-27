@@ -316,7 +316,6 @@ async def give_position(message: types.Message, state: FSMContext):
 
 @dp.message_handler(content_types=["text"], state="*")
 async def send_emoji(message: types.Message, state: FSMContext):
-    print(message.text)
     if not database.existence_received_emoji(queries[message.from_user.id][-1], message.from_user.id):
         if message.text[:-1].encode('utf-8').decode('utf-8') == _("It's alright"):
                 database.add_to_received_emoji_if_victory(queries[message.from_user.id][-1], message.from_user.id)

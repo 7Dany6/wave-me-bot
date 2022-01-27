@@ -301,10 +301,10 @@ async def give_position(message: types.Message, state: FSMContext):
     queries[message.from_user.id].pop()
         #last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")  # база с координатами, временем, contact и кто просил
     await check_queries(queries, message.from_user.id)
+    await state.finish()
 
 
-
-@dp.message_handler(content_types=["text"], state=Form.send_geo)
+@dp.message_handler(content_types=["text"], state="*")
 async def send_emoji(message: types.Message):
     print(message.text)
     if not database.existence_received_emoji(queries[message.from_user.id][-1], message.from_user.id):

@@ -9,3 +9,4 @@ class Form(StatesGroup):
     enter_location = State()
     fav_location = State()
     send_geo = State()
+    send_emoji = State()

@@ -175,21 +175,21 @@ async def add_location(message: types.Message, state: FSMContext):
     await Form.enter_location.set()
 
 
-    @dp.message_handler(content_types=['text'], state=Form.enter_location)
-    async def name_location(message: types.Message):
-        location_names[message.from_user.id].append(message.text.encode('utf-8'))
-        print(location_names)
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        button = types.KeyboardButton(_("Share a location"), request_location=True)
-        keyboard.add(button)
-        await bot.send_message(message.from_user.id,
-                               text=_("Please, <b>switch on your location</b> and press the button!"),
-                               parse_mode=ParseMode.HTML,
-                               reply_markup=keyboard)
-        #await Form.fav_location.set()
+@dp.message_handler(content_types=['text'], state=Form.enter_location)
+async def name_location(message: types.Message):
+    location_names[message.from_user.id].append(message.text.encode('utf-8'))
+    print(location_names)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    button = types.KeyboardButton(_("Share a location"), request_location=True)
+    keyboard.add(button)
+    await bot.send_message(message.from_user.id,
+                           text=_("Please, <b>switch on your location</b> and press the button!"),
+                           parse_mode=ParseMode.HTML,
+                           reply_markup=keyboard)
+    await Form.fav_location.set()
 
 
-@dp.message_handler(content_types=['location'], state="*")
+@dp.message_handler(content_types=['location'], state=Form.fav_location)
 async def send_fav_location(message: types.Message, state: FSMContext):
     print(location_names)
     if not location_names[message.from_user.id]:
@@ -199,7 +199,7 @@ async def send_fav_location(message: types.Message, state: FSMContext):
                                message['location']['longitude'], message['location']['latitude'])
     await bot.send_message(message.from_user.id, text=_("Location has been registered!"))
     print(database.coordinates(message.from_user.id))
-    #await state.finish()
+    await state.finish()
 
 
 @dp.message_handler(commands="care", state='*')
@@ -222,7 +222,7 @@ async def track_person(message: types.Message, state: FSMContext):
 async def find_person(message: types.Message, state: FSMContext):
     if message.content_type == 'text' and (message.text[:-1] in (_("It's alright"), _('Let it snow'), _('Freezing'), _("I'm on fire")) or message.text[:-2] == _("Happy New Year")):
         print('here')
-        await send_emoji(message=message)
+        await send_emoji(message=message, state="*")
     else:
         print('text name')
         try:
@@ -256,12 +256,15 @@ async def find_person(message: types.Message, state: FSMContext):
         except IndexError:
             await forwarding(message.from_user.id)
             await bot.send_message(message.from_user.id, text='@here_i_ambot')
-    await Form.send_geo.set()
+    #await Form.send_geo.set()
+    #await Form.send_emoji.set()
 
 
-@dp.message_handler(content_types=["location"], state=Form.send_geo)
+@dp.message_handler(content_types=["location"], state="*")
 async def give_position(message: types.Message, state: FSMContext):
     print('here')
+    if location_names[message.from_user.id]:
+        await send_fav_location(message=message, state='*')
     polygon = Polygon([(message['location']['latitude'] + 0.002,
                        message['location']['longitude'] - 0.002),
                        (message['location']['latitude'] + 0.002,
@@ -301,11 +304,11 @@ async def give_position(message: types.Message, state: FSMContext):
     queries[message.from_user.id].pop()
         #last_geopositions[message.from_user.id].append(f"{json_data['response']['GeoObjectCollection']['featureMember'][1]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']}")  # база с координатами, временем, contact и кто просил
     await check_queries(queries, message.from_user.id)
-    await state.finish()
+    #await state.finish()
 
 
 @dp.message_handler(content_types=["text"], state="*")
-async def send_emoji(message: types.Message):
+async def send_emoji(message: types.Message, state: FSMContext):
     print(message.text)
     if not database.existence_received_emoji(queries[message.from_user.id][-1], message.from_user.id):
         if message.text[:-1] == _("It's alright"):
@@ -361,4 +364,5 @@ async def send_emoji(message: types.Message):
                                database.get_name(queries[message.from_user.id][-1])[0][0],
                                queries[message.from_user.id][-1],
                                database.get_contact(queries[message.from_user.id][-1])[0][0])
+    #await state.finish()
 

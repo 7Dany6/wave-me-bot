@@ -273,14 +273,14 @@ async def give_position(message: types.Message, state: FSMContext):
     print('here')
     if location_names[message.from_user.id]:
         await send_fav_location(message=message, state='*')
-    polygon = Polygon([(message['location']['latitude'] + 0.002,
-                       message['location']['longitude'] - 0.002),
+    polygon = Polygon([(message['location']['latitude'] - 0.002,
+                       message['location']['longitude'] + 0.002),
+                       (message['location']['latitude'] - 0.002,
+                        message['location']['longitude'] - 0.002),
                        (message['location']['latitude'] + 0.002,
-                        message['location']['longitude'] + 0.002),
-                       (message['location']['latitude'] - 0.002,
-                        message['location']['longitude'] + 0.002),
-                       (message['location']['latitude'] - 0.002,
-                        message['location']['longitude'] - 0.002)])
+                        message['location']['longitude'] - 0.002),
+                       (message['location']['latitude'] + 0.002,
+                        message['location']['longitude'] + 0.002)])
     print(polygon)
     result = requests.get(
         url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')

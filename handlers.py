@@ -177,6 +177,10 @@ async def add_location(message: types.Message, state: FSMContext):
 
 @dp.message_handler(content_types=['text'], state=Form.enter_location)
 async def name_location(message: types.Message):
+    if message.content_type == 'text' and (message.text[:-1] in (_("It's alright"), _('Let it snow'), _('Freezing'), _("I'm on fire")) or message.text[:-2] == _("Happy New Year")):
+        print('here')
+        await send_emoji(message=message, state="*")
+        return
     if message.text.startswith('/'):
         await track_person(message=message, state='*')
         return

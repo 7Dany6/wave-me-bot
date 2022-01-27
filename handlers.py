@@ -177,6 +177,9 @@ async def add_location(message: types.Message, state: FSMContext):
 
 @dp.message_handler(content_types=['text'], state=Form.enter_location)
 async def name_location(message: types.Message):
+    if message.text.startswith('/'):
+        await track_person(message=message, state='*')
+        return
     location_names[message.from_user.id].append(message.text.encode('utf-8'))
     print(location_names)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)

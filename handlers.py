@@ -175,25 +175,25 @@ async def add_location(message: types.Message, state: FSMContext):
     await Form.enter_location.set()
 
 
-    @dp.message_handler(content_types=['text'], state=Form.enter_location)
-    async def name_location(message: types.Message):
-        if message.text[:-1].encode('utf-8').decode('utf-8') in (_("It's alright"), _('Let it snow'), _('Freezing'), _("I'm on fire")) or message.text[:-2] == _("Happy New Year"):
-            print('here')
-            await send_emoji(message=message, state="*")
-            return
-        elif message.text.startswith('/'):
-            await track_person(message=message, state='*')
-            return
-        location_names[message.from_user.id].append(message.text.encode('utf-8'))
-        print(location_names)
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        button = types.KeyboardButton(_("Share a location"), request_location=True)
-        keyboard.add(button)
-        await bot.send_message(message.from_user.id,
-                               text=_("Please, <b>switch on your location</b> and press the button!"),
-                               parse_mode=ParseMode.HTML,
-                               reply_markup=keyboard)
-        await Form.fav_location.set()
+@dp.message_handler(content_types=['text'], state=Form.enter_location)
+async def name_location(message: types.Message):
+    if message.text[:-1].encode('utf-8').decode('utf-8') in (_("It's alright"), _('Let it snow'), _('Freezing'), _("I'm on fire")) or message.text[:-2] == _("Happy New Year"):
+        print('here')
+        await send_emoji(message=message, state="*")
+        return
+    elif message.text.startswith('/'):
+        await track_person(message=message, state='*')
+        return
+    location_names[message.from_user.id].append(message.text.encode('utf-8'))
+    print(location_names)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    button = types.KeyboardButton(_("Share a location"), request_location=True)
+    keyboard.add(button)
+    await bot.send_message(message.from_user.id,
+                           text=_("Please, <b>switch on your location</b> and press the button!"),
+                           parse_mode=ParseMode.HTML,
+                           reply_markup=keyboard)
+    await Form.fav_location.set()
 
 
 @dp.message_handler(content_types=['location'], state=Form.fav_location)

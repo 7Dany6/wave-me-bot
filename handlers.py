@@ -43,7 +43,7 @@ async def intro_function(message):
         button_agree = types.KeyboardButton(_("Agree"))
         button_disagree = types.KeyboardButton(_("Disagree"))
         keyboard.add(button_agree, button_disagree)
-        await bot.send_message(message.from_user.id, text=_("Please, before using a bot, meet terms and conditions:\n{}").format(f'https://7daneksulimov.wixsite.com/hereiam'), reply_markup=keyboard)
+        await bot.send_message(message.from_user.id, text=_("Please, before using a bot, meet terms and conditions:\n{}").format(f'https://7daneksulimov.wixsite.com/waveme'), reply_markup=keyboard)
 
 
 @dp.message_handler(lambda message: message.text == _("Disagree"), state="*")

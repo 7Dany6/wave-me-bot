@@ -114,11 +114,13 @@ async def return_number_received_emojis(message: types.Message, state: FSMContex
                                       "{2} {3}\n"
                                       "{4} {5}\n"
                                       "{6} {7}\n"
-                                      "{8} {9}\n").format(database.count_received_emojis_victory(message.from_user.id)[0][0], "\u270C",
+                                      "{8} {9}\n"
+                                      "{10} {11}\n").format(database.count_received_emojis_victory(message.from_user.id)[0][0], "\u270C",
                                                           database.count_received_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
                                                           database.count_received_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
                                                           database.count_received_emojis_fire(message.from_user.id)[0][0], "\U0001F525",
-                                                          database.count_received_emojis_snowman(message.from_user.id)[0][0], "\u2603"))
+                                                          database.count_received_emojis_like(message.from_user.id)[0][0], "\U0001F44D",
+                                                          database.count_received_emojis_swear(message.from_user.id)[0][0], "\U0001F621"))
 
 
 
@@ -138,11 +140,13 @@ async def return_number_sent_emojis(message: types.Message, state: FSMContext):
                                       "{2} {3}\n"
                                       "{4} {5}\n"
                                       "{6} {7}\n"
-                                      "{8} {9}\n").format(database.count_sent_emojis_victory(message.from_user.id)[0][0], "\u270C",
-                                                           database.count_sent_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
-                                                           database.count_sent_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
-                                                           database.count_sent_emojis_fire(message.from_user.id)[0][0], "\U0001F525",
-                                                          database.count_sent_emojis_snowman(message.from_user.id)[0][0], "\u2603"))
+                                      "{8} {9}\n"
+                                      "{10} {11}\n").format(database.count_sent_emojis_victory(message.from_user.id)[0][0], "\u270C",
+                                                          database.count_sent_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
+                                                          database.count_sent_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
+                                                          database.count_sent_emojis_fire(message.from_user.id)[0][0], "\U0001F525",
+                                                          database.count_sent_emojis_like(message.from_user.id)[0][0], "\U0001F44D",
+                                                          database.count_sent_emojis_swear(message.from_user.id)[0][0], "\U0001F621"))
 
 
 
@@ -178,7 +182,7 @@ async def add_location(message: types.Message, state: FSMContext):
 
 @dp.message_handler(content_types=['text'], state=Form.enter_location)
 async def name_location(message: types.Message):
-    if message.text[:-1].encode('utf-8').decode('utf-8') in (_("It's alright"), _('Let it snow'), _('Freezing'), _("I'm on fire")) or message.text[:-2] == _("Happy New Year"):
+    if not message.text.isalpha():
         print('here')
         await send_emoji(message=message, state="*")
         return
@@ -228,7 +232,7 @@ async def track_person(message: types.Message, state: FSMContext):
 
 @dp.message_handler(content_types=['contact', 'text'], state=Form.tracking)
 async def find_person(message: types.Message, state: FSMContext):
-    if message.content_type == 'text' and (message.text[:-1] in (_("It's alright"), _('Let it snow'), _('Freezing'), _("I'm on fire")) or message.text[:-2] == _("Happy New Year")):
+    if message.content_type == 'text' and not message.text.isalpha():
         print('here')
         await send_emoji(message=message, state="*")
     else:
@@ -317,48 +321,40 @@ async def give_position(message: types.Message, state: FSMContext):
 
 @dp.message_handler(content_types=["text"], state="*")
 async def send_emoji(message: types.Message, state: FSMContext):
+    print(ord(message.text))
     if not database.existence_received_emoji(queries[message.from_user.id][-1], message.from_user.id):
-        if message.text[:-1].encode('utf-8').decode('utf-8') == _("It's alright"):
-                database.add_to_received_emoji_if_victory(queries[message.from_user.id][-1], message.from_user.id)
-        elif message.text[:-1].encode('utf-8').decode('utf-8') == _('Let it snow'):
-                database.add_to_received_emoji_if_snowflake(queries[message.from_user.id][-1], message.from_user.id)
-        elif message.text[:-1].encode('utf-8').decode('utf-8') == _('Freezing'):
-                database.add_to_received_emoji_if_cold(queries[message.from_user.id][-1], message.from_user.id)
-        elif message.text[:-2].encode('utf-8').decode('utf-8') == _('Happy New Year'):
-                database.add_to_received_emoji_if_snowman(queries[message.from_user.id][-1], message.from_user.id)
-        elif message.text[:-1].encode('utf-8').decode('utf-8') == _("I'm on fire"):
-                database.add_to_received_emoji_if_fire(queries[message.from_user.id][-1], message.from_user.id)
+        if ord(message.text) == 9996:
+            database.add_to_received_emoji_if_victory(queries[message.from_user.id][-1], message.from_user.id)
+        elif ord(message.text) == 10052:
+            database.add_to_received_emoji_if_snowflake(queries[message.from_user.id][-1], message.from_user.id)
+        elif ord(message.text) == 129398:
+            database.add_to_received_emoji_if_cold(queries[message.from_user.id][-1], message.from_user.id)
+        elif ord(message.text) == 128077:
+            database.add_to_received_emoji_if_like(queries[message.from_user.id][-1], message.from_user.id)
+        elif ord(message.text) == 128293:
+            database.add_to_received_emoji_if_fire(queries[message.from_user.id][-1], message.from_user.id)
+        elif ord(message.text) == 128545:
+            database.add_to_received_emoji_if_swear(queries[message.from_user.id][-1], message.from_user.id)
     else:
-        if message.text[:-1].encode('utf-8').decode('utf-8') == _("It's alright"):
+        if ord(message.text) == 9996:
             database.increase_received_victory_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-        elif message.text[:-1].encode('utf-8').decode('utf-8') == _('Let it snow'):
+        elif ord(message.text) == 10052:
             database.increase_received_snowflake_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-        elif message.text[:-1].encode('utf-8').decode('utf-8') == _('Freezing'):
+        elif ord(message.text) == 129398:
             database.increase_received_cold_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-        elif message.text[:-2].encode('utf-8').decode('utf-8') == _('Happy New Year'):
-            database.increase_received_snowman_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
-        elif message.text[:-1].encode('utf-8').decode('utf-8') == _("I'm on fire"):
+        elif ord(message.text) == 128077:
+            database.increase_received_like_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+        elif ord(message.text) == 128293:
             database.increase_received_fire_emoji_counter(queries[message.from_user.id][-1], message.from_user.id)
+        elif ord(message.text) == 128545:
+            database.increase_received_swear_counter(queries[message.from_user.id][-1], message.from_user.id)
     if not database.user_existance(queries[message.from_user.id][-1], message.from_user.id):
         database.add_to_tracking_trackable(queries[message.from_user.id][-1], database.get_contact(queries[message.from_user.id][-1])[0][0],
                                                message.from_user.id, database.get_contact(message.from_user.id)[0][0], database.get_name(message.from_user.id)[0][0])
     else:
         database.increase_counter(database.get_contact(queries[message.from_user.id][-1])[0][0], database.get_contact(message.from_user.id)[0][0])
-    if message.text[:-1].encode('utf-8').decode('utf-8') == _("It's alright"):
-        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                text="\u270C")
-    elif message.text[:-1].encode('utf-8').decode('utf-8') == _('Let it snow'):
-        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                text="\u2744")
-    elif message.text[:-1].encode('utf-8').decode('utf-8') == _('Freezing'):
-        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text="\U0001F976")
-    elif message.text[:-2].encode('utf-8').decode('utf-8') == _('Happy New Year'):
-        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text="\u2603")
-    elif message.text[:-1].encode('utf-8').decode('utf-8') == _("I'm on fire"):
-        await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
-                                   text="\U0001F525")
+    await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
+                           text=message.text)
     await bot.send_message(chat_id='{0}'.format(queries[message.from_user.id][-1]),
                                text=_("From user <a href='tg://user?id={1}'>{0}</a> with number {2}!").format(
                                    database.get_name(message.from_user.id)[0][0], message.from_user.id,

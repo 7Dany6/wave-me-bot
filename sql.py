@@ -105,21 +105,21 @@ class SQL:
         Adds user to `received_emoji` table
         """
         with self.connection:
-            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 1, 0, 0, 0, 0)", (id_received, id_sent,)).fetchall()
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 1, 0, 0, 0, 0, 0)", (id_received, id_sent,)).fetchall()
 
     def add_to_received_emoji_if_snowflake(self, id_received, id_sent):
         """
         Adds user to `received_emoji` table
         """
         with self.connection:
-            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 0, 1, 0, 0)", (id_received, id_sent,)).fetchall()
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 0, 1, 0, 0, 0)", (id_received, id_sent,)).fetchall()
 
     def add_to_received_emoji_if_cold(self, id_received, id_sent):
         """
         Adds user to `received_emoji` table
         """
         with self.connection:
-            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 1, 0, 0, 0)", (id_received, id_sent,)).fetchall()
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 1, 0, 0, 0, 0)", (id_received, id_sent,)).fetchall()
 
     def add_to_received_emoji_if_snowman(self, id_received, id_sent):
         """
@@ -128,12 +128,29 @@ class SQL:
         with self.connection:
             return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 0, 0, 1, 0)", (id_received, id_sent,)).fetchall()
 
+    def add_to_received_emoji_if_swear(self, id_received, id_sent):
+        """
+        Adds user to `received_emoji` table
+        """
+        with self.connection:
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 0, 0, 0, 0, 1)",
+                                       (id_received, id_sent,)).fetchall()
+
+    def add_to_received_emoji_if_like(self, id_received, id_sent):
+        """
+        Adds user to `received_emoji` table
+        """
+        with self.connection:
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 0, 0, 1, 0, 0)",
+                                       (id_received, id_sent,)).fetchall()
+
+
     def add_to_received_emoji_if_fire(self, id_received, id_sent):
         """
         Adds user to `received_emoji` table
         """
         with self.connection:
-            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 0, 0, 0, 1)", (id_received, id_sent,)).fetchall()
+            return self.cursor.execute("INSERT INTO `received_emoji` VALUES (?, ?, 0, 0, 0, 0, 1, 0)", (id_received, id_sent,)).fetchall()
 
     def existence_received_emoji(self, id_received, id_sent):
         """
@@ -177,6 +194,21 @@ class SQL:
         """
         with self.connection:
             return self.cursor.execute("UPDATE `received_emoji` SET `count_fire` = `count_fire` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()
+
+    def increase_received_like_emoji_counter(self, received_id, sent_id):
+        """
+        Increases number of like emojis by 1
+        """
+        with self.connection:
+            return self.cursor.execute("UPDATE `received_emoji` SET `count_like` = `count_like` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()
+
+    def increase_received_swear_counter(self, received_id, sent_id):
+        """
+        Increases number of swear emojis by 1
+        """
+        with self.connection:
+            return self.cursor.execute("UPDATE `received_emoji` SET `count_swear` = `count_swear` + 1 WHERE `id_received` = ? AND `id_sent` = ?", (received_id, sent_id,)).fetchall()
+
 
     def count_received_emojis_victory(self, received_id):
         """
@@ -230,6 +262,19 @@ class SQL:
                                        "FROM `count_emojis`"
                                        "WHERE `id_received` = ?",(received_id, )).fetchall()
 
+    def count_received_emojis_swear(self, received_id):
+        """
+        Counts number of all received swear emojis
+        """
+        with self.connection:
+            return self.cursor.execute("WITH `count_emojis` AS"
+                                       "(SELECT SUM(`count_swear`) as number, `id_received`"
+                                       "FROM `received_emoji`"
+                                       "GROUP BY `id_received`)"
+                                       "SELECT `number`"
+                                       "FROM `count_emojis`"
+                                       "WHERE `id_received` = ?",(received_id, )).fetchall()
+
     def count_received_emojis_fire(self, received_id):
         """
         Counts number of all received fire emojis
@@ -243,13 +288,13 @@ class SQL:
                                        "FROM `count_emojis`"
                                        "WHERE `id_received` = ?",(received_id, )).fetchall()
 
-    def count_received_emojis_snowman(self, received_id):
+    def count_received_emojis_like(self, received_id):
         """
-        Counts number of all received snowman emojis
+        Counts number of all received like emojis
         """
         with self.connection:
             return self.cursor.execute("WITH `count_emojis` AS"
-                                       "(SELECT SUM(`count_snowman`) as number, `id_received`"
+                                       "(SELECT SUM(`count_like`) as number, `id_received`"
                                        "FROM `received_emoji`"
                                        "GROUP BY `id_received`)"
                                        "SELECT `number`"
@@ -315,6 +360,32 @@ class SQL:
         with self.connection:
             return self.cursor.execute("WITH `count_emojis` AS"
                                        "(SELECT SUM(`count_snowman`) as number, `id_sent`"
+                                       "FROM `received_emoji`"
+                                       "GROUP BY `id_sent`)"
+                                       "SELECT `number`"
+                                       "FROM `count_emojis`"
+                                       "WHERE `id_sent` = ?",(received_id, )).fetchall()
+
+    def count_sent_emojis_like(self, received_id):
+        """
+        Counts number of received like emojis
+        """
+        with self.connection:
+            return self.cursor.execute("WITH `count_emojis` AS"
+                                       "(SELECT SUM(`count_like`) as number, `id_sent`"
+                                       "FROM `received_emoji`"
+                                       "GROUP BY `id_sent`)"
+                                       "SELECT `number`"
+                                       "FROM `count_emojis`"
+                                       "WHERE `id_sent` = ?",(received_id, )).fetchall()
+
+    def count_sent_emojis_swear(self, received_id):
+        """
+        Counts number of received swear emojis
+        """
+        with self.connection:
+            return self.cursor.execute("WITH `count_emojis` AS"
+                                       "(SELECT SUM(`count_swear`) as number, `id_sent`"
                                        "FROM `received_emoji`"
                                        "GROUP BY `id_sent`)"
                                        "SELECT `number`"

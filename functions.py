@@ -22,12 +22,13 @@ async def register(id: int):
 def throw_buttons():
     keyboards = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     button_location = types.KeyboardButton(_("Here I Am"), request_location=True)
-    button_victory = types.KeyboardButton(_("It's alright{0}").format("\u270C"))
-    button_snowflake = types.KeyboardButton(_("Let it snow{0}").format("\u2744"))
-    button_cold = types.KeyboardButton(_("Freezing{0}").format("\U0001F976"))
-    button_snowman = types.KeyboardButton(_("Happy New Year{0}!").format("\u2603"))
-    button_fire = types.KeyboardButton(_("I'm on fire{0}").format("\U0001F525"))
-    keyboards.add(button_location, button_victory, button_snowflake, button_cold, button_fire, button_snowman)
+    button_victory = types.KeyboardButton("\u270C")
+    button_snowflake = types.KeyboardButton("\u2744")
+    button_cold = types.KeyboardButton("\U0001F976")
+    button_like = types.KeyboardButton("\U0001F44D")
+    button_fire = types.KeyboardButton("\U0001F525")
+    button_swear = types.KeyboardButton("\U0001F621")
+    keyboards.add(button_location, button_victory, button_snowflake, button_cold, button_fire, button_swear, button_like)
     return keyboards
 
 async def send_request(ids: int, first_name: str, message_id:int, contact):

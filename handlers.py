@@ -114,11 +114,13 @@ async def return_number_received_emojis(message: types.Message, state: FSMContex
                                       "{2} {3}\n"
                                       "{4} {5}\n"
                                       "{6} {7}\n"
-                                      "{8} {9}\n").format(database.count_received_emojis_victory(message.from_user.id)[0][0], "\u270C",
+                                      "{8} {9}\n"
+                                      "{10} {11}\n").format(database.count_received_emojis_victory(message.from_user.id)[0][0], "\u270C",
                                                           database.count_received_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
                                                           database.count_received_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
                                                           database.count_received_emojis_fire(message.from_user.id)[0][0], "\U0001F525",
-                                                          database.count_received_emojis_snowman(message.from_user.id)[0][0], "\u2603"))
+                                                          database.count_received_emojis_like(message.from_user.id)[0][0], "\U0001F44D",
+                                                          database.count_received_emojis_swear(message.from_user.id)[0][0], "\U0001F621"))
 
 
 
@@ -138,11 +140,13 @@ async def return_number_sent_emojis(message: types.Message, state: FSMContext):
                                       "{2} {3}\n"
                                       "{4} {5}\n"
                                       "{6} {7}\n"
-                                      "{8} {9}\n").format(database.count_sent_emojis_victory(message.from_user.id)[0][0], "\u270C",
-                                                           database.count_sent_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
-                                                           database.count_sent_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
-                                                           database.count_sent_emojis_fire(message.from_user.id)[0][0], "\U0001F525",
-                                                          database.count_sent_emojis_snowman(message.from_user.id)[0][0], "\u2603"))
+                                      "{8} {9}\n"
+                                      "{10} {11}\n").format(database.count_sent_emojis_victory(message.from_user.id)[0][0], "\u270C",
+                                                          database.count_sent_emojis_snowflake(message.from_user.id)[0][0], "\u2744",
+                                                          database.count_sent_emojis_cold(message.from_user.id)[0][0], "\U0001F976",
+                                                          database.count_sent_emojis_fire(message.from_user.id)[0][0], "\U0001F525",
+                                                          database.count_sent_emojis_like(message.from_user.id)[0][0], "\U0001F44D",
+                                                          database.count_sent_emojis_swear(message.from_user.id)[0][0], "\U0001F621"))
 
 
 

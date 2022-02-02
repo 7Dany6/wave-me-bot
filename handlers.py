@@ -8,6 +8,8 @@ import numpy
 import aiohttp
 
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from collections import defaultdict
 
 from aiogram.dispatcher import FSMContext
@@ -294,7 +296,12 @@ async def give_position(message: types.Message, state: FSMContext):
                        (message['location']['latitude'] + 0.002,
                         message['location']['longitude'] + 0.002)])
     print(polygon)
-    result = requests.get(
+    session = requests.Session()
+    retry = Retry(connect=3, backoff_factor=0.5)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    result = session.get(
         url=f'https://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={message["location"]["longitude"]},{message["location"]["latitude"]}&format=json&lang=ru_RU')
     json_data = result.json()
     if database.existence_fav_locations(message.from_user.id):

@@ -90,6 +90,28 @@ async def cancel_handler(message: types.Message, state: FSMContext):
     logging.info('Cancelling state {}'.format(current_state))
     await cancel(message.from_user.id)
 
+@dp.message_handler(commands="mailing", state='*')
+async def mailing(message: types.Message):
+    await bot.send_message(USER_ID, text="Someone touched this!")
+    if message.from_user.id == USER_ID:
+        print('mailing')
+        ids = database.ids()
+        ids = [id[0] for id in ids]
+        for person in ids:
+            print(person)
+            await bot.send_message(person, text="Привет! Мы возвращаемся с новостями!\n"
+                                                "теперь доступна новая команда /add_place,\n"
+                                                "которая позволит сохранить локацию в избранные и делиться ей со своими друзьями.\n"
+                                                "Также доступны: ответы эмоциональным состоянием, статистика по собранным и отправленным эмоджи!\n"
+                                                "Скоро будет: объявлено тестирование новых функций, обновление эмоджи,\n"
+                                                "которые будут отвечать нынешней ситуации в мире и сезонности, добавлена обратная связь и\n"
+                                                "другие масштабные изменения! Спасибо, что выбрали WAVEME!\n"
+                                                "Открывайте новые локации вместе и будьте на связи!")
+    else:
+        await bot.send_message(message.from_user.id, text=_("Excuse me, this command is private:)"))
+
+
+
 @dp.message_handler(commands='instr', state="*")
 async def instruction(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
@@ -382,5 +404,6 @@ async def send_emoji(message: types.Message, state: FSMContext):
                                database.get_name(queries[message.from_user.id][-1])[0][0],
                                queries[message.from_user.id][-1],
                                database.get_contact(queries[message.from_user.id][-1])[0][0])
-    #await state.finish()
+
+
 

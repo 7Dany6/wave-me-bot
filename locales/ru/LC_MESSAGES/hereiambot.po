@@ -1,10 +1,25 @@
 # Russian translations for PROJECT.
-# Copyright (C) 2021 ORGANIZATION
+# Copyright (C) 2022 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
 #, fuzzy
-# functions.py line 34
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2021-11-10 21:04+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
 msgid "Share a contact"
 msgstr "Поделиться контактом"
 
@@ -17,242 +32,341 @@ msgid "Thank you for the registration!"
 msgstr "Спасибо за регистрацию!"
 
 # functions.py line 48
-msgid "Welcome, {0}!\nYou can find instruction in menu!\nPlease, choose your further action from menu!"
-msgstr "Добро пожаловать, {0}!\nВ меню доступна инструкция.\nПожалуйста, выберите действие из меню!"
+msgid ""
+"Welcome, {0}!\n"
+"You can find instruction in menu!\n"
+"Please, choose your further action from menu!"
+msgstr ""
+"Добро пожаловать, {0}!\n"
+"В меню доступна инструкция.\n"
+"Пожалуйста, выберите действие из меню!"
 
 # functions.py line 53
-msgid "Your action has been cancelled"
-msgstr "Ваше действие было отменено!"
+ msgid "Your action has been cancelled"
+ msgstr "Ваше действие было отменено!"
 
 # functions.py line 56
-msgid "Leave your opinion, it will improve the bot!"
-msgstr "Оставьте Ваше мнение, это улучшит бота!"
+ msgid "Leave your opinion, it will improve the bot!"
+ msgstr "Оставьте Ваше мнение, это улучшит бота!"
 
 # handlers.py line 93
-msgid "Please share a contact of a person (choose from your contacts) or click a button with his/her name!"
-msgstr "Пожалуйста, поделитесь контактом человека (выберите из Ваших контактов) или нажмите на кнопку с его именем!"
+ msgid ""
+ "Please share a contact of a person"
+ " (choose from your contacts) or click"
+ " a button with his/her name!"
+ msgstr ""
+ "Пожалуйста, поделитесь контактом человека "
+ "(выберите из Ваших контактов) или "
+ "нажмите на кнопку с его именем!"
 
 # functions.py line 61
-msgid "Please share a contact of a person (choose from your contacts)!"
-msgstr "Пожалуйста, поделитесь контактом человека (выберите из Ваших контактов)!"
+ msgid "Please share a contact of a person (choose from your contacts)!"
+ msgstr ""
+ "Пожалуйста, поделитесь контактом человека "
+ "(выберите из Ваших контактов)!"
 
 # functions.py line 66
-msgid "Your request has been accepted!\nA person will share his location or state soon, meanwhile you can continue using a bot!"
-msgstr "Ваш запрос принят!\nПользователь скоро ответит своей локацией или своим состоянием, Вы можете продолжать использовать бота!"
+ msgid ""
+ "Your request has been accepted!\n"
+ "A person will share his location "
+ "or state soon, meanwhile you can "
+ "continue using a bot!"
+ msgstr ""
+ "Ваш запрос принят!\n"
+ "Пользователь скоро ответит своей локацией "
+ "или своим состоянием, Вы можете "
+ "продолжать использовать бота!"
 
 # functions.py line 70
-msgid "Unfortunately, this user has not been registered yet, tell him/her about this bot by forwarding the following message:"
-msgstr "К сожалению, выбранный Вами пользователь не зарегистрирован, расскажите ему о боте, переслав следующее сообщение:"
+ msgid ""
+ "Unfortunately, this user has not been"
+ " registered yet, tell him/her about "
+ "this bot by forwarding the following "
+ "message:"
+ msgstr ""
+ "К сожалению, выбранный Вами пользователь "
+ "не зарегистрирован, расскажите ему о "
+ "боте, переслав следующее сообщение:"
 
 # functions.py line 13
-msgid "You've already been registered!"
-msgstr "Поздравляем, Вы уже зарегистрированы!"
+ msgid "You've already been registered!"
+ msgstr "Поздравляем, Вы уже зарегистрированы!"
 
 # functions.py line 17
-msgid "Location"
-msgstr "Локация"
+ msgid "Location"
+ msgstr "Локация"
 
 # functions.py line 18
-msgid "I'm OK"
-msgstr "Я в порядке"
+# handlers.py line 156
+ msgid "I'm OK"
+ msgstr "Я в порядке"
 
 # functions.py line 24
-msgid "User [{0}](tg://user?id={1}) with number {2} waves {3} to you\.\n*Switch on your location before answer 'Here I Am'*\."
-msgstr "Пользователь [{0}](tg://user?id={1}) с номером {2} помахал {3} Вам\.\n*Включите локацию перед тем, как ответить 'Я здесь'*\."
+ msgid ""
+ "User [{0}](tg://user?id={1}) with number {2} waves {3} to you\\.\n"
+ "*Switch on your location before answer 'Here I Am'*\\."
+ msgstr ""
+ "Пользователь [{0}](tg://user?id={1}) с номером {2} помахал {3} Вам\\.\n"
+ "*Включите локацию перед тем, как ответить 'Я здесь'*\\."
 
-#functions.py line 27
-msgid "Freezing{0}"
-msgstr "Зима-холода{0}"
+# functions.py line 27
+ msgid "Freezing{0}"
+ msgstr "Зима-холода{0}"
 
-#functions.py line 28
-msgid "Happy New Year{0}!"
-msgstr "С Новым годом{0}!"
+# functions.py line 28
+# functions.py line 26
+ msgid "Happy New Year{0}!"
+ msgstr "С Новым годом{0}!"
 
-#functions.py line 29
-msgid "I'm on fire{0}"
-msgstr "Ты горишь как огонь{0}"
+# functions.py line 29
+ msgid "I'm on fire{0}"
+ msgstr "Ты горишь как огонь{0}"
 
 # handlers.py line 140
-msgid "User [{0}](tg://user?id={1}) with number {2} is here:\n{3}"
-msgstr "Пользователь [{0}](tg://user?id={1}) с номером {2} находится здесь:\n{3}"
+ msgid ""
+ "User [{0}](tg://user?id={1}) with number {2} is here:\n"
+ "{3}"
+ msgstr ""
+ "Пользователь [{0}](tg://user?id={1}) с номером {2} находится здесь:\n"
+ "{3}"
 
-# handlers.py line 156
-msgid "I'm OK"
-msgstr "Я в порядке"
-
-#handlers.py line 127
-msgid "User <a href='tg://user?id={1}'>{0}</a> with number {2} is here:\n{3}"
-msgstr "Пользователь <a href='tg://user?id={1}'>{0}</a> с номером {2} находится здесь:\n{3}"
+# handlers.py line 127
+ msgid ""
+ "User <a href='tg://user?id={1}'>{0}</a> with number {2} is here:\n"
+ "{3}"
+ msgstr ""
+ "Пользователь <a href='tg://user?id={1}'>{0}</a> с"
+ " номером {2} находится здесь:\n"
+ "{3}"
 
 # functions.py line 17
-msgid "Here I Am"
-msgstr "Я здесь"
+ msgid "Here I Am"
+ msgstr "Я здесь"
 
 # handlers.py line 151
-msgid "From user <a href='tg://user?id={1}'>{0}</a> with number {2}!"
-msgstr "От <a href='tg://user?id={1}'>{0}</a> с номером {2}!"
-
+ msgid "From user <a href='tg://user?id={1}'>{0}</a> with number {2}!"
+ msgstr "От <a href='tg://user?id={1}'>{0}</a> с номером {2}!"
 
 # handlers.py line 179
-msgid "You haven't received emojis, send someone a request by clicking /care!"
-msgstr "У Вас пока что нет эмоджи, отправьте кому-нибудь запрос, нажав /care!"
+ msgid "You haven't received emojis, send someone a request by clicking /care!"
+ msgstr "У Вас пока что нет эмоджи, отправьте кому-нибудь запрос, нажав /care!"
 
 # handlers.py line 182
-msgid "You've received: \n"
-      "{0} {1}\n"
-      "{2} {3}\n"
-      "{4} {5}\n"
-      "{6} {7}\n"
-      "{8} {9}\n"
-
-msgstr "Вы получили: \n"
-       "{0} {1}\n"
-       "{2} {3}\n"
-       "{4} {5}\n"
-       "{6} {7}\n"
-       "{8} {9}\n"
+ msgid ""
+ "You've received: \n"
+ "{0} {1}\n"
+ "{2} {3}\n"
+ "{4} {5}\n"
+ "{6} {7}\n"
+ "{8} {9}\n"
+ msgstr ""
+ "Вы получили: \n"
+ "{0} {1}\n"
+ "{2} {3}\n"
+ "{4} {5}\n"
+ "{6} {7}\n"
+ "{8} {9}\n"
 
 # handlers.py line 236
-msgid "You've sent: \n"
-      "{0} {1}\n"
-      "{2} {3}\n"
-      "{4} {5}\n"
-      "{6} {7}\n"
-      "{8} {9}\n"
-msgstr "Вы отправили: \n"
-       "{0} {1}\n"
-       "{2} {3}\n"
-       "{4} {5}\n"
-       "{6} {7}\n"
-       "{8} {9}\n"
-
+ msgid ""
+ "You've sent: \n"
+ "{0} {1}\n"
+ "{2} {3}\n"
+ "{4} {5}\n"
+ "{6} {7}\n"
+ "{8} {9}\n"
+ msgstr ""
+ "Вы отправили: \n"
+ "{0} {1}\n"
+ "{2} {3}\n"
+ "{4} {5}\n"
+ "{6} {7}\n"
+ "{8} {9}\n"
 
 # handlers.py line 190
-msgid "You haven't sent emojis yet!"
-msgstr "Вы пока не отправляли эмоджи!"
+ msgid "You haven't sent emojis yet!"
+ msgstr "Вы пока не отправляли эмоджи!"
 
 # handlers.py line 193
-msgid "{1} sent emojis!"
-msgstr "Вы отправили {0} эмоджи!"
+ msgid "{1} sent emojis!"
+ msgstr "Вы отправили {0} эмоджи!"
 
 # functions.py line 25
-msgid "It's alright{0}"
-msgstr "Всё идёт по плану{0}"
+ msgid "It's alright{0}"
+ msgstr "Всё идёт по плану{0}"
 
 # functions.py line 26
-msgid "Let it snow{0}"
-msgstr "Опять метель{0}"
-
-# functions.py line 26
-msgid "Happy New Year{0}!"
-msgstr "С Новым годом{0}!"
+ msgid "Let it snow{0}"
+ msgstr "Опять метель{0}"
 
 # handlers.py line 97
-msgid "Hi!\n\nWe all have people to care about and now you can do it without disturbing them directly"
-                                  "sending a request with only one button and getting all answers in one place!\n\n"
-                                  "I'm glad to help you out\n\nWith my helping hand you can get where this or that person is"
-                                  "or you can get an emoji with his state.\n\n"
-                                  "Press /start and enjoy:\n\n-/care to check location/state (clip symbol-contact)\n\n"
-                                  "-/sent to know how many emojis you've sent\n\n"
-                                  "-/received to know how many emojis you've received\n\n"
-                                  "-/add_place to add location to your favourite\n\n"
-                                  "P.S. Use me via smartphone, not PC!"
-msgstr "Привет!\n\nУ всех нас есть люди, о которых мы проявлем заботу, и теперь есть возможность делать это, не беспокоя их напрямую,"
-                                  " послав запрос всего лишь одной кнопкой и получая все ответы в одном месте!\n\n"
-                                  "И я рад Вам помочь!\n\nС помощью меня Вы можете узнать, где тот или иной человек находится"
-                                  " или получить эмоджи с его состоянием.\n\n"
-                                  "Нажмите /start и наслаждайтесь:\n\n-/care, чтобы посмотреть локацию/состояние (знак скрепки-contact)\n\n"
-                                  "-/sent, чтобы посмотреть, сколько эмоджи Вы отправили\n\n"
-                                  "-/received, чтобы посмотреть, сколько эмоджи Вы получили\n\n"
-                                  "-/add_place, чтобы добавить локацию в Ваши избранные\n\n"
-                                  "P.S. Используйте меня через телефон, а не компьютер, если хотите отправить локацию!"
+ msgid ""
+ "Hi!\n"
+ "\n"
+ "We all have people to care about"
+ " and now you can do it without"
+ " disturbing them directlysending a request"
+ " with only one button and getting "
+ "all answers in one place!\n"
+ "\n"
+ "I'm glad to help you out\n"
+ "\n"
+ "With my helping hand you can get"
+ " where this or that person isor "
+ "you can get an emoji with his "
+ "state.\n"
+ "\n"
+ "Press /start and enjoy:\n"
+ "\n"
+ "-/care to check location/state (clip symbol-contact)\n"
+ "\n"
+ "-/sent to know how many emojis you've sent\n"
+ "\n"
+ "-/received to know how many emojis you've received\n"
+ "\n"
+ "-/add_place to add location to your favourite\n"
+ "\n"
+ "P.S. Use me via smartphone, not PC!"
+ msgstr ""
+ "Привет!\n"
+ "\n"
+ "У всех нас есть люди, о которых"
+ " мы проявлем заботу, и теперь есть"
+ " возможность делать это, не беспокоя "
+ "их напрямую, послав запрос всего лишь"
+ " одной кнопкой и получая все ответы"
+ " в одном месте!\n"
+ "\n"
+ "И я рад Вам помочь!\n"
+ "\n"
+ "С помощью меня Вы можете узнать, "
+ "где тот или иной человек находится "
+ "или получить эмоджи с его состоянием."
+ "\n"
+ "\n"
+ "Нажмите /start и наслаждайтесь:\n"
+ "\n"
+ "-/care, чтобы посмотреть локацию/состояние (знак скрепки-contact)\n"
+ "\n"
+ "-/sent, чтобы посмотреть, сколько эмоджи Вы отправили\n"
+ "\n"
+ "-/received, чтобы посмотреть, сколько эмоджи Вы получили\n"
+ "\n"
+ "-/add_place, чтобы добавить локацию в Ваши избранные\n"
+ "\n"
+ "P.S. Используйте меня через телефон, а"
+ " не компьютер, если хотите отправить "
+ "локацию!"
+
 # handlers.py line 35
-msgid "Agree"
-msgstr "Соглашаюсь"
+ msgid "Agree"
+ msgstr "Соглашаюсь"
 
 # handlers.py line 36
-msgid "Disagree"
-msgstr "Не соглашаюсь"
+ msgid "Disagree"
+ msgstr "Не соглашаюсь"
 
 # handlers.py line 38
-msgid "Please, before using a bot, meet terms and conditions:\n{}"
-msgstr "Пожалуйста, перед использованием бота ознакомьтесь с пользовательскими соглашениями:\n{}"
+ msgid ""
+ "Please, before using a bot, meet terms and conditions:\n"
+ "{}"
+ msgstr ""
+ "Пожалуйста, перед использованием бота "
+ "ознакомьтесь с пользовательскими соглашениями:\n"
+ ""
+ "{}"
 
 # handlers.py line 47
-msgid "Sorry, firstly you need to agree with terms and conditions!"
-msgstr "Приносим извинения, для начала работы необходимо принять пользовательские соглашения!"
+ msgid "Sorry, firstly you need to agree with terms and conditions!"
+ msgstr ""
+ "Приносим извинения, для начала работы "
+ "необходимо принять пользовательские соглашения!"
 
-#functions.py line 29
-msgid "I'm on fire"
-msgstr "Ты горишь как огонь"
+# functions.py line 29
+ msgid "I'm on fire"
+ msgstr "Ты горишь как огонь"
 
-#functions.py line 29
-msgid "Happy New Year"
-msgstr "С Новым годом"
+# functions.py line 29
+ msgid "Happy New Year"
+ msgstr "С Новым годом"
 
-#functions.py line 29
-msgid "Freezing"
-msgstr "Зима-холода"
+# functions.py line 29
+ msgid "Freezing"
+ msgstr "Зима-холода"
 
-#functions.py line 29
-msgid "Let it snow"
-msgstr "Опять метель"
+# functions.py line 29
+ msgid "Let it snow"
+ msgstr "Опять метель"
 
-#functions.py line 29
-msgid "It's alright"
-msgstr "Всё идёт по плану"
+# functions.py line 29
+#~ msgid "It's alright"
+#~ msgstr "Всё идёт по плану"
 
-#handlers.py line 231
-msgid "Please, enter the name of a location!"
-msgstr "Пожалуйста, введите название места!"
+# handlers.py line 231
+ msgid "Please, enter the name of a location!"
+ msgstr "Пожалуйста, введите название места!"
 
-#handlers.py line 240
-msgid "Please, <b>switch on your location</b> and press the button!"
-msgstr "Пожалуйста, <b>включите Вашу локацию</b> и нажмите на кнопку!"
+# handlers.py line 240
+ msgid "Please, <b>switch on your location</b> and press the button!"
+ msgstr "Пожалуйста, <b>включите Вашу локацию</b> и нажмите на кнопку!"
 
-#handlers.py line 243
-msgid "Share a location"
-msgstr "Поделиться локацией"
+# handlers.py line 243
+ msgid "Share a location"
+ msgstr "Поделиться локацией"
 
-#handlers.py line 252
-msgid "Location has been registered!"
-msgstr "Локация успешно зарегистрирована!"
+# handlers.py line 252
+ msgid "Location has been registered!"
+ msgstr "Локация успешно зарегистрирована!"
 
-#handlers.py line 163
-msgid "User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: {3}"
-msgstr "Пользователь <a href='tg://user?id={1}'>{0}</a> с номером {2} находится здесь: {3}"
+# handlers.py line 163
+ msgid "User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: {3}"
+ msgstr ""
+ "Пользователь <a href='tg://user?id={1}'>{0}</a> с"
+ " номером {2} находится здесь: {3}"
 
-#handlers.py line 167
-msgid "User <a href='tg://user?id={1}'>{0}</a> with number {2} is here: <a href='http://www.google.com/maps/place/{4},{5}'>{3}</a>"
-msgstr "Пользователь <a href='tg://user?id={1}'>{0}</a> с номером {2} находится здесь: <a href='http://www.google.com/maps/place/{4},{5}'>{3}</a>"
+# handlers.py line 167
+ msgid ""
+ "User <a href='tg://user?id={1}'>{0}</a> with "
+ "number {2} is here: <a "
+ "href='http://www.google.com/maps/place/{4},{5}'>{3}</a>"
+ msgstr ""
+ "Пользователь <a href='tg://user?id={1}'>{0}</a> с"
+ " номером {2} находится здесь: <a "
+ "href='http://www.google.com/maps/place/{4},{5}'>{3}</a>"
 
-msgid "You've received: \n"
-      "{0} {1}\n"
-      "{2} {3}\n"
-      "{4} {5}\n"
-      "{6} {7}\n"
-      "{8} {9}\n"
-      "{10} {11}\n"
+ msgid ""
+ "You've received: \n"
+ "{0} {1}\n"
+ "{2} {3}\n"
+ "{4} {5}\n"
+ "{6} {7}\n"
+ "{8} {9}\n"
+ "{10} {11}\n"
+ msgstr ""
+ "Вы получили: \n"
+ "{0} {1}\n"
+ "{2} {3}\n"
+ "{4} {5}\n"
+ "{6} {7}\n"
+ "{8} {9}\n"
+ "{10} {11}\n"
 
-msgstr "Вы получили: \n"
-       "{0} {1}\n"
-       "{2} {3}\n"
-       "{4} {5}\n"
-       "{6} {7}\n"
-       "{8} {9}\n"
-       "{10} {11}\n"
+ msgid ""
+ "You've sent: \n"
+ "{0} {1}\n"
+ "{2} {3}\n"
+ "{4} {5}\n"
+ "{6} {7}\n"
+ "{8} {9}\n"
+ "{10} {11}\n"
+ msgstr ""
+ "Вы отправили: \n"
+ "{0} {1}\n"
+ "{2} {3}\n"
+ "{4} {5}\n"
+ "{6} {7}\n"
+ "{8} {9}\n"
+ "{10} {11}\n"
 
-msgid "You've sent: \n"
-      "{0} {1}\n"
-      "{2} {3}\n"
-      "{4} {5}\n"
-      "{6} {7}\n"
-      "{8} {9}\n"
-      "{10} {11}\n"
-msgstr "Вы отправили: \n"
-       "{0} {1}\n"
-       "{2} {3}\n"
-       "{4} {5}\n"
-       "{6} {7}\n"
-       "{8} {9}\n"
-       "{10} {11}\n"
+msgid "Excuse me, this command is private:)"
+msgstr "Прошу прощения, это закрытая команда:)"
